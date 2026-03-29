@@ -12,6 +12,31 @@ const RATING_LABELS: Record<number, string> = {
   1: "Learning",
 };
 
+function getDeviconSvgUrl(deviconClass: string): string {
+  const name = deviconClass.replace("devicon-", "");
+  const folder = name.replace(/-(plain|original|line)(-wordmark)?$/, "");
+  return `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${folder}/${name}.svg`;
+}
+
+async function loadGoogleFont(text: string): Promise<ArrayBuffer> {
+  const API = `https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&text=${encodeURIComponent(text)}`;
+  const css = await (
+    await fetch(API, {
+      headers: {
+        // Old Safari UA to get truetype format (Satori doesn't support woff2)
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1",
+      },
+    })
+  ).text();
+
+  const resource = css.match(
+    /src: url\((.+)\) format\('(opentype|truetype)'\)/
+  );
+  if (!resource) throw new Error("Failed to load font");
+  return await (await fetch(resource[1])).arrayBuffer();
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const data = searchParams.get("data");
@@ -38,6 +63,19 @@ export async function GET(request: Request) {
     }))
     .filter((g) => g.techs.length > 0);
 
+  // フォントサブセット用にOGP内で使う全テキストを収集
+  const allText =
+    "My TechStack skills " +
+    Object.keys(stack).length +
+    groups
+      .map(
+        (g) =>
+          RATING_LABELS[g.rating] + g.techs.map((t) => t!.name).join("")
+      )
+      .join("");
+
+  const fontData = await loadGoogleFont(allText);
+
   return new ImageResponse(
     (
       <div
@@ -48,8 +86,8 @@ export async function GET(request: Request) {
           height: "100%",
           backgroundColor: "#111113",
           color: "#ffffff",
-          padding: "48px 56px",
-          fontFamily: "sans-serif",
+          padding: "40px 48px",
+          fontFamily: "Noto Sans",
         }}
       >
         {/* Header */}
@@ -58,10 +96,12 @@ export async function GET(request: Request) {
             display: "flex",
             alignItems: "baseline",
             gap: "16px",
-            marginBottom: "36px",
+            marginBottom: "32px",
           }}
         >
-          <span style={{ fontSize: "42px", fontWeight: "800", color: "#ffffff" }}>
+          <span
+            style={{ fontSize: "40px", fontWeight: "700", color: "#ffffff" }}
+          >
             My TechStack
           </span>
           <span style={{ fontSize: "20px", color: "#71717a" }}>
@@ -74,7 +114,7 @@ export async function GET(request: Request) {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "24px",
+            gap: "20px",
             flex: 1,
           }}
         >
@@ -84,7 +124,7 @@ export async function GET(request: Request) {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "12px",
+                gap: "10px",
               }}
             >
               {/* Rating header */}
@@ -92,28 +132,40 @@ export async function GET(request: Request) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "12px",
+                  gap: "10px",
                 }}
               >
-                <span style={{ color: "#fbbf24", fontSize: "24px", letterSpacing: "2px" }}>
-                  {"★".repeat(group.rating)}
-                  <span style={{ color: "#3f3f46" }}>
-                    {"★".repeat(5 - group.rating)}
-                  </span>
-                </span>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        borderRadius: "3px",
+                        backgroundColor:
+                          i < group.rating ? "#fbbf24" : "#3f3f46",
+                      }}
+                    />
+                  ))}
+                </div>
                 <span
-                  style={{ color: "#a1a1aa", fontSize: "18px", fontWeight: "600" }}
+                  style={{
+                    color: "#a1a1aa",
+                    fontSize: "17px",
+                    fontWeight: "700",
+                  }}
                 >
                   {group.label}
                 </span>
               </div>
 
-              {/* Tech chips */}
+              {/* Tech chips with icons */}
               <div
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
-                  gap: "10px",
+                  gap: "8px",
                 }}
               >
                 {group.techs.map((tech) => (
@@ -122,16 +174,24 @@ export async function GET(request: Request) {
                     style={{
                       display: "flex",
                       alignItems: "center",
+                      gap: "8px",
                       backgroundColor: "#27272a",
                       border: "1px solid #52525b",
-                      borderRadius: "12px",
-                      padding: "8px 18px",
-                      fontSize: "20px",
-                      fontWeight: "500",
+                      borderRadius: "10px",
+                      padding: "6px 14px",
+                      fontSize: "18px",
+                      fontWeight: "400",
                       color: "#f4f4f5",
                     }}
                   >
-                    {tech!.name}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getDeviconSvgUrl(tech!.deviconClass)}
+                      alt=""
+                      width={22}
+                      height={22}
+                    />
+                    <span>{tech!.name}</span>
                   </div>
                 ))}
               </div>
@@ -144,15 +204,26 @@ export async function GET(request: Request) {
           style={{
             display: "flex",
             justifyContent: "flex-end",
-            marginTop: "16px",
+            marginTop: "12px",
           }}
         >
-          <span style={{ color: "#52525b", fontSize: "16px" }}>
+          <span style={{ color: "#52525b", fontSize: "14px" }}>
             techstack-share.vercel.app
           </span>
         </div>
       </div>
     ),
-    { width: 1200, height: 630 }
+    {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: "Noto Sans",
+          data: fontData,
+          weight: 400,
+          style: "normal",
+        },
+      ],
+    }
   );
 }
