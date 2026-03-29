@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { TechGrid } from "@/components/tech-grid";
@@ -10,20 +10,22 @@ import { decode, type TechStack } from "@/lib/encoder";
 
 function HomeContent() {
   const searchParams = useSearchParams();
-  const [stack, setStack] = useState<TechStack>({});
-  const [searchQuery, setSearchQuery] = useState("");
-  const gridRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const initialStack = useMemo<TechStack>(() => {
     const restoreHash = searchParams.get("restore");
     if (restoreHash) {
       try {
-        setStack(decode(restoreHash));
+        return decode(restoreHash);
       } catch {
-        // invalid hash, ignore
+        return {};
       }
     }
+    return {};
   }, [searchParams]);
+
+  const [stack, setStack] = useState<TechStack>(initialStack);
+  const [searchQuery, setSearchQuery] = useState("");
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const selectedCount = Object.keys(stack).length;
 
