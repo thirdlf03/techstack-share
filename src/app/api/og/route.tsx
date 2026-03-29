@@ -27,7 +27,6 @@ export async function GET(request: Request) {
     return new Response("Invalid data", { status: 400 });
   }
 
-  // ★の数でグループ化（5→1の降順）
   const groups = [5, 4, 3, 2, 1]
     .map((rating) => ({
       rating,
@@ -35,8 +34,7 @@ export async function GET(request: Request) {
       techs: Object.entries(stack)
         .filter(([, r]) => r === rating)
         .map(([id]) => getTechById(id))
-        .filter(Boolean)
-        .map((t) => t!.name),
+        .filter(Boolean),
     }))
     .filter((g) => g.techs.length > 0);
 
@@ -48,68 +46,105 @@ export async function GET(request: Request) {
           flexDirection: "column",
           width: "100%",
           height: "100%",
-          backgroundColor: "#0a0a0a",
+          backgroundColor: "#09090b",
           color: "#fafafa",
-          padding: "48px",
+          padding: "40px 48px",
           fontFamily: "sans-serif",
         }}
       >
+        {/* Header */}
         <div
           style={{
             display: "flex",
-            fontSize: "36px",
-            fontWeight: "bold",
-            marginBottom: "32px",
+            alignItems: "center",
+            marginBottom: "28px",
           }}
         >
-          My TechStack
+          <span style={{ fontSize: "32px", fontWeight: "bold" }}>
+            My TechStack
+          </span>
         </div>
+
+        {/* Groups */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "20px",
+            gap: "18px",
             flex: 1,
           }}
         >
           {groups.map((group) => (
             <div
               key={group.rating}
-              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
             >
+              {/* Rating header */}
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
-                  fontSize: "18px",
-                  fontWeight: "600",
+                  borderBottom: "1px solid #27272a",
+                  paddingBottom: "6px",
                 }}
               >
-                <span style={{ color: "#facc15" }}>
+                <span style={{ color: "#facc15", fontSize: "18px" }}>
                   {"★".repeat(group.rating)}
+                  {"☆".repeat(5 - group.rating)}
                 </span>
-                <span style={{ color: "#a1a1aa" }}>{group.label}</span>
+                <span
+                  style={{ color: "#a1a1aa", fontSize: "14px", fontWeight: 600 }}
+                >
+                  {group.label}
+                </span>
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-                {group.techs.map((name) => (
+
+              {/* Tech cards */}
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                }}
+              >
+                {group.techs.map((tech) => (
                   <div
-                    key={name}
+                    key={tech!.id}
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      backgroundColor: "#1a1a2e",
-                      borderRadius: "8px",
-                      padding: "6px 12px",
-                      fontSize: "16px",
+                      gap: "6px",
+                      backgroundColor: "#18181b",
+                      border: "1px solid #3f3f46",
+                      borderRadius: "10px",
+                      padding: "6px 14px",
+                      fontSize: "15px",
                     }}
                   >
-                    {name}
+                    <span>{tech!.name}</span>
                   </div>
                 ))}
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "12px",
+          }}
+        >
+          <span style={{ color: "#52525b", fontSize: "13px" }}>
+            techstack-share
+          </span>
         </div>
       </div>
     ),
