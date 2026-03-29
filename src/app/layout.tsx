@@ -30,6 +30,7 @@ export default function RootLayout({
       <head>
         <link
           rel="stylesheet"
+          crossOrigin="anonymous"
           href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
         />
       </head>
