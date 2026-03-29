@@ -1,12 +1,16 @@
 import { ImageResponse } from "next/og";
 import { decode } from "@/lib/encoder";
-import {
-  CATEGORIES,
-  CATEGORY_LABELS,
-  getTechsByCategory,
-} from "@/data/technologies";
+import { getTechById } from "@/data/technologies";
 
 export const runtime = "edge";
+
+const RATING_LABELS: Record<number, string> = {
+  5: "Expert",
+  4: "Advanced",
+  3: "Intermediate",
+  2: "Beginner",
+  1: "Learning",
+};
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -23,14 +27,18 @@ export async function GET(request: Request) {
     return new Response("Invalid data", { status: 400 });
   }
 
-  const selectedIds = Object.keys(stack);
-
-  const groups = CATEGORIES.map((cat) => ({
-    label: CATEGORY_LABELS[cat],
-    techs: getTechsByCategory(cat)
-      .filter((t) => selectedIds.includes(t.id))
-      .map((t) => ({ name: t.name, rating: stack[t.id] })),
-  })).filter((g) => g.techs.length > 0);
+  // ★の数でグループ化（5→1の降順）
+  const groups = [5, 4, 3, 2, 1]
+    .map((rating) => ({
+      rating,
+      label: RATING_LABELS[rating],
+      techs: Object.entries(stack)
+        .filter(([, r]) => r === rating)
+        .map(([id]) => getTechById(id))
+        .filter(Boolean)
+        .map((t) => t!.name),
+    }))
+    .filter((g) => g.techs.length > 0);
 
   return new ImageResponse(
     (
@@ -54,7 +62,7 @@ export async function GET(request: Request) {
             marginBottom: "32px",
           }}
         >
-          TechStack Share
+          My TechStack
         </div>
         <div
           style={{
@@ -66,37 +74,37 @@ export async function GET(request: Request) {
         >
           {groups.map((group) => (
             <div
-              key={group.label}
+              key={group.rating}
               style={{ display: "flex", flexDirection: "column", gap: "8px" }}
             >
               <div
                 style={{
                   display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                   fontSize: "18px",
-                  color: "#a1a1aa",
                   fontWeight: "600",
                 }}
               >
-                {group.label}
+                <span style={{ color: "#facc15" }}>
+                  {"★".repeat(group.rating)}
+                </span>
+                <span style={{ color: "#a1a1aa" }}>{group.label}</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-                {group.techs.map((tech) => (
+                {group.techs.map((name) => (
                   <div
-                    key={tech.name}
+                    key={name}
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "6px",
                       backgroundColor: "#1a1a2e",
                       borderRadius: "8px",
                       padding: "6px 12px",
                       fontSize: "16px",
                     }}
                   >
-                    <span>{tech.name}</span>
-                    <span style={{ color: "#facc15" }}>
-                      {"★".repeat(tech.rating)}
-                    </span>
+                    {name}
                   </div>
                 ))}
               </div>

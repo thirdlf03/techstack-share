@@ -6,6 +6,7 @@ import { SearchBar } from "@/components/search-bar";
 import { TechGrid } from "@/components/tech-grid";
 import { ExportButtons } from "@/components/export-buttons";
 import { RestoreInput } from "@/components/restore-input";
+import { ShareCard } from "@/components/share-card";
 import { decode, type TechStack } from "@/lib/encoder";
 
 function HomeContent() {
@@ -25,7 +26,7 @@ function HomeContent() {
 
   const [stack, setStack] = useState<TechStack>(initialStack);
   const [searchQuery, setSearchQuery] = useState("");
-  const gridRef = useRef<HTMLDivElement>(null);
+  const exportRef = useRef<HTMLDivElement>(null);
 
   const selectedCount = Object.keys(stack).length;
 
@@ -46,16 +47,24 @@ function HomeContent() {
           )}
         </div>
 
-        <div ref={gridRef}>
-          <TechGrid
-            stack={stack}
-            onStackChange={setStack}
-            searchQuery={searchQuery}
-          />
-        </div>
+        <TechGrid
+          stack={stack}
+          onStackChange={setStack}
+          searchQuery={searchQuery}
+        />
+
+        {selectedCount > 0 && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">プレビュー</h2>
+            <div ref={exportRef} className="bg-background p-6 rounded-xl border">
+              <h3 className="text-lg font-bold mb-4">My TechStack</h3>
+              <ShareCard stack={stack} />
+            </div>
+          </div>
+        )}
 
         <div className="sticky bottom-4 bg-background/80 backdrop-blur-sm border rounded-lg p-4 space-y-4">
-          <ExportButtons stack={stack} targetRef={gridRef} />
+          <ExportButtons stack={stack} targetRef={exportRef} />
           <RestoreInput onRestore={setStack} />
         </div>
       </div>
