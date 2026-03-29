@@ -46,9 +46,9 @@ export async function GET(request: Request) {
           flexDirection: "column",
           width: "100%",
           height: "100%",
-          backgroundColor: "#09090b",
-          color: "#fafafa",
-          padding: "40px 48px",
+          backgroundColor: "#111113",
+          color: "#ffffff",
+          padding: "48px 56px",
           fontFamily: "sans-serif",
         }}
       >
@@ -56,12 +56,16 @@ export async function GET(request: Request) {
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            marginBottom: "28px",
+            alignItems: "baseline",
+            gap: "16px",
+            marginBottom: "36px",
           }}
         >
-          <span style={{ fontSize: "32px", fontWeight: "bold" }}>
+          <span style={{ fontSize: "42px", fontWeight: "800", color: "#ffffff" }}>
             My TechStack
+          </span>
+          <span style={{ fontSize: "20px", color: "#71717a" }}>
+            {Object.keys(stack).length} skills
           </span>
         </div>
 
@@ -70,7 +74,7 @@ export async function GET(request: Request) {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "18px",
+            gap: "24px",
             flex: 1,
           }}
         >
@@ -80,7 +84,7 @@ export async function GET(request: Request) {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "10px",
+                gap: "12px",
               }}
             >
               {/* Rating header */}
@@ -88,28 +92,28 @@ export async function GET(request: Request) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
-                  borderBottom: "1px solid #27272a",
-                  paddingBottom: "6px",
+                  gap: "12px",
                 }}
               >
-                <span style={{ color: "#facc15", fontSize: "18px" }}>
+                <span style={{ color: "#fbbf24", fontSize: "24px", letterSpacing: "2px" }}>
                   {"★".repeat(group.rating)}
-                  {"☆".repeat(5 - group.rating)}
+                  <span style={{ color: "#3f3f46" }}>
+                    {"★".repeat(5 - group.rating)}
+                  </span>
                 </span>
                 <span
-                  style={{ color: "#a1a1aa", fontSize: "14px", fontWeight: 600 }}
+                  style={{ color: "#a1a1aa", fontSize: "18px", fontWeight: "600" }}
                 >
                   {group.label}
                 </span>
               </div>
 
-              {/* Tech cards */}
+              {/* Tech chips */}
               <div
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
-                  gap: "8px",
+                  gap: "10px",
                 }}
               >
                 {group.techs.map((tech) => (
@@ -118,15 +122,16 @@ export async function GET(request: Request) {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "6px",
-                      backgroundColor: "#18181b",
-                      border: "1px solid #3f3f46",
-                      borderRadius: "10px",
-                      padding: "6px 14px",
-                      fontSize: "15px",
+                      backgroundColor: "#27272a",
+                      border: "1px solid #52525b",
+                      borderRadius: "12px",
+                      padding: "8px 18px",
+                      fontSize: "20px",
+                      fontWeight: "500",
+                      color: "#f4f4f5",
                     }}
                   >
-                    <span>{tech!.name}</span>
+                    {tech!.name}
                   </div>
                 ))}
               </div>
@@ -139,11 +144,11 @@ export async function GET(request: Request) {
           style={{
             display: "flex",
             justifyContent: "flex-end",
-            marginTop: "12px",
+            marginTop: "16px",
           }}
         >
-          <span style={{ color: "#52525b", fontSize: "13px" }}>
-            techstack-share
+          <span style={{ color: "#52525b", fontSize: "16px" }}>
+            techstack-share.vercel.app
           </span>
         </div>
       </div>
