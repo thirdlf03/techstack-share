@@ -1,3 +1,5 @@
+"use client";
+
 import type { TechStack } from "@/lib/encoder";
 import { CATEGORIES, CATEGORY_LABELS, getTechsByCategory } from "@/data/technologies";
 import { StarRating } from "./star-rating";
