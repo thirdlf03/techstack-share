@@ -2,12 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ExportButtons } from "./export-buttons";
 
-vi.mock("html2canvas", () => ({
-  default: vi.fn(() =>
-    Promise.resolve({
-      toDataURL: () => "data:image/png;base64,mock",
-    })
-  ),
+vi.mock("html-to-image", () => ({
+  toPng: vi.fn(() => Promise.resolve("data:image/png;base64,mock")),
 }));
 
 Object.assign(navigator, {

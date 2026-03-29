@@ -23,14 +23,11 @@ export function ExportButtons({ stack, targetRef }: ExportButtonsProps) {
 
   const handleExportImage = useCallback(async () => {
     if (!targetRef.current) return;
-    const html2canvas = (await import("html2canvas")).default;
-    const canvas = await html2canvas(targetRef.current, {
-      backgroundColor: null,
-      scale: 2,
-    });
+    const { toPng } = await import("html-to-image");
+    const dataUrl = await toPng(targetRef.current, { pixelRatio: 2 });
     const link = document.createElement("a");
     link.download = "techstack.png";
-    link.href = canvas.toDataURL("image/png");
+    link.href = dataUrl;
     link.click();
   }, [targetRef]);
 
