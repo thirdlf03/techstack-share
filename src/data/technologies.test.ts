@@ -1,10 +1,6 @@
 import { describe, it, expect } from "vitest";
-import {
-  technologies,
-  CATEGORIES,
-  getTechById,
-  getTechsByCategory,
-} from "./technologies";
+import { getTechnologyIconSvg } from "./tech-icons.generated";
+import { technologies, CATEGORIES, getTechById, getTechsByCategory } from "./technologies";
 
 describe("technologies data", () => {
   it("should have unique ids", () => {
@@ -38,6 +34,12 @@ describe("technologies data", () => {
   it("all deviconClass should start with devicon-", () => {
     for (const tech of technologies) {
       expect(tech.deviconClass).toMatch(/^devicon-/);
+    }
+  });
+
+  it("every technology should have a bundled icon", () => {
+    for (const tech of technologies) {
+      expect(getTechnologyIconSvg(tech.id)).toContain("<svg");
     }
   });
 });

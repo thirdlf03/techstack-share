@@ -6,16 +6,16 @@
 
 ## 技術選定
 
-| 項目 | 選定 | 理由 |
-|------|------|------|
-| フレームワーク | Next.js (App Router) | SSR + Edge Function + Vercel デプロイ |
-| UI | shadcn/ui + Tailwind CSS | カスタマイズ性、Next.jsとの相性 |
-| アイコン | Devicon (CDN) | 800+の技術アイコン、最高の網羅性 |
-| 画像エクスポート | html2canvas | DOM→Canvas変換、実績豊富 |
-| 圧縮 | pako | zlib圧縮でURLをコンパクトに |
-| OGP | Vercel OG (next/og) | Edge Functionで動的画像生成 |
-| パッケージマネージャー | pnpm | 高速、ディスク効率 |
-| デプロイ | Vercel | Next.jsとの最適な統合 |
+| 項目                   | 選定                     | 理由                                  |
+| ---------------------- | ------------------------ | ------------------------------------- |
+| フレームワーク         | Next.js (App Router)     | SSR + Edge Function + Vercel デプロイ |
+| UI                     | shadcn/ui + Tailwind CSS | カスタマイズ性、Next.jsとの相性       |
+| アイコン               | Devicon (CDN)            | 800+の技術アイコン、最高の網羅性      |
+| 画像エクスポート       | html2canvas              | DOM→Canvas変換、実績豊富              |
+| 圧縮                   | pako                     | zlib圧縮でURLをコンパクトに           |
+| OGP                    | Vercel OG (next/og)      | Edge Functionで動的画像生成           |
+| パッケージマネージャー | pnpm                     | 高速、ディスク効率                    |
+| デプロイ               | Vercel                   | Next.jsとの最適な統合                 |
 
 ## アーキテクチャ
 
@@ -27,11 +27,11 @@
 
 ### ページ構成
 
-| ルート | 役割 | レンダリング |
-|--------|------|-------------|
-| `/` | 技術選択・熟練度入力画面 | CSR |
-| `/share/[hash]` | 共有ビュー（読み取り専用カード） | SSR + CSR |
-| `/api/og` | OGP画像の動的生成 | Edge Function |
+| ルート          | 役割                             | レンダリング  |
+| --------------- | -------------------------------- | ------------- |
+| `/`             | 技術選択・熟練度入力画面         | CSR           |
+| `/share/[hash]` | 共有ビュー（読み取り専用カード） | SSR + CSR     |
+| `/api/og`       | OGP画像の動的生成                | Edge Function |
 
 ### データフロー
 
@@ -46,12 +46,18 @@
 
 ```typescript
 type Category =
-  | "language" | "frontend" | "backend" | "cloud"
-  | "database" | "devops" | "mobile" | "other";
+  | "language"
+  | "frontend"
+  | "backend"
+  | "cloud"
+  | "database"
+  | "devops"
+  | "mobile"
+  | "other";
 
 type Technology = {
-  id: string;           // 一意ID (例: "aws", "react")
-  name: string;         // 表示名 (例: "AWS", "React")
+  id: string; // 一意ID (例: "aws", "react")
+  name: string; // 表示名 (例: "AWS", "React")
   deviconClass: string; // Deviconクラス名
   category: Category;
 };

@@ -1,30 +1,15 @@
 "use client";
 
 import type { TechStack } from "@/lib/encoder";
-import { getTechById } from "@/data/technologies";
+import { groupTechStack } from "@/lib/share-card";
+import { TechnologyIcon } from "./technology-icon";
 
 type ShareCardProps = {
   stack: TechStack;
 };
 
-const RATING_LABELS: Record<number, string> = {
-  5: "Expert",
-  4: "Advanced",
-  3: "Intermediate",
-  2: "Beginner",
-  1: "Learning",
-};
-
 export function ShareCard({ stack }: ShareCardProps) {
-  // ★の数でグループ化（5→1の降順）
-  const grouped = [5, 4, 3, 2, 1].map((rating) => ({
-    rating,
-    label: RATING_LABELS[rating],
-    techs: Object.entries(stack)
-      .filter(([, r]) => r === rating)
-      .map(([id]) => getTechById(id))
-      .filter(Boolean),
-  })).filter((g) => g.techs.length > 0);
+  const grouped = groupTechStack(stack);
 
   return (
     <div className="space-y-6">
@@ -37,13 +22,11 @@ export function ShareCard({ stack }: ShareCardProps) {
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
             {group.techs.map((tech) => (
               <div
-                key={tech!.id}
+                key={tech.id}
                 className="flex flex-col items-center gap-2 rounded-xl border border-primary bg-primary/5 p-3"
               >
-                <i className={`${tech!.deviconClass} colored text-3xl`} />
-                <span className="text-xs font-medium text-center">
-                  {tech!.name}
-                </span>
+                <TechnologyIcon className="size-8" techId={tech.id} />
+                <span className="text-xs font-medium text-center">{tech.name}</span>
               </div>
             ))}
           </div>

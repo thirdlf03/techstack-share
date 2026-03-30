@@ -1,43 +1,24 @@
 import { ImageResponse } from "next/og";
 import { decode } from "@/lib/encoder";
-import { getTechById } from "@/data/technologies";
+import { getTechnologyIconDataUrl } from "@/lib/technology-icons";
+import { groupTechStack } from "@/lib/share-card";
+
+/* eslint-disable react-hooks/purity */
 
 export const runtime = "edge";
 
-const RATING_LABELS: Record<number, string> = {
-  5: "Expert",
-  4: "Advanced",
-  3: "Intermediate",
-  2: "Beginner",
-  1: "Learning",
-};
+const fontDataPromise = fetch(new URL("./assets/Geist-Regular.ttf", import.meta.url)).then(
+  async (response) => {
+    if (!response.ok) {
+      throw new Error(`Failed to load OG font: ${response.status}`);
+    }
 
-function getDeviconSvgUrl(deviconClass: string): string {
-  const name = deviconClass.replace("devicon-", "");
-  const folder = name.replace(/-(plain|original|line)(-wordmark)?$/, "");
-  return `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${folder}/${name}.svg`;
-}
-
-async function loadGoogleFont(text: string): Promise<ArrayBuffer> {
-  const API = `https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&text=${encodeURIComponent(text)}`;
-  const css = await (
-    await fetch(API, {
-      headers: {
-        // Old Safari UA to get truetype format (Satori doesn't support woff2)
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1",
-      },
-    })
-  ).text();
-
-  const resource = css.match(
-    /src: url\((.+)\) format\('(opentype|truetype)'\)/
-  );
-  if (!resource) throw new Error("Failed to load font");
-  return await (await fetch(resource[1])).arrayBuffer();
-}
+    return response.arrayBuffer();
+  },
+);
 
 export async function GET(request: Request) {
+  const requestStartedAt = Date.now();
   const { searchParams } = new URL(request.url);
   const data = searchParams.get("data");
 
@@ -46,76 +27,68 @@ export async function GET(request: Request) {
   }
 
   let stack;
+  const decodeStartedAt = Date.now();
   try {
     stack = decode(data);
   } catch {
     return new Response("Invalid data", { status: 400 });
   }
+  const decodeDuration = Date.now() - decodeStartedAt;
 
-  const groups = [5, 4, 3, 2, 1]
-    .map((rating) => ({
-      rating,
-      label: RATING_LABELS[rating],
-      techs: Object.entries(stack)
-        .filter(([, r]) => r === rating)
-        .map(([id]) => getTechById(id))
-        .filter(Boolean),
-    }))
-    .filter((g) => g.techs.length > 0);
+  const groupingStartedAt = Date.now();
+  const groups = groupTechStack(stack);
+  const groupingDuration = Date.now() - groupingStartedAt;
 
-  // フォントサブセット用にOGP内で使う全テキストを収集
-  const allText =
-    "My TechStack skills " +
-    Object.keys(stack).length +
-    groups
-      .map(
-        (g) =>
-          RATING_LABELS[g.rating] + g.techs.map((t) => t!.name).join("")
-      )
-      .join("");
+  const fontStartedAt = Date.now();
+  const fontData = await fontDataPromise;
+  const fontDuration = Date.now() - fontStartedAt;
 
-  const fontData = await loadGoogleFont(allText);
-
-  return new ImageResponse(
-    (
+  const response = new ImageResponse(
+    <div
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(239,246,255,1) 0%, rgba(248,250,252,1) 60%, rgba(224,231,255,1) 100%)",
+        color: "#0f172a",
+        display: "flex",
+        flexDirection: "column",
+        fontFamily: "Geist",
+        height: "100%",
+        padding: "40px 48px",
+        width: "100%",
+      }}
+    >
       <div
         style={{
+          backgroundColor: "#ffffff",
+          border: "1px solid #bfdbfe",
+          borderRadius: "28px",
+          boxShadow: "0 24px 60px rgba(37, 99, 235, 0.08)",
           display: "flex",
+          flex: 1,
           flexDirection: "column",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#111113",
-          color: "#ffffff",
-          padding: "40px 48px",
-          fontFamily: "Noto Sans",
+          padding: "36px",
         }}
       >
-        {/* Header */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            gap: "16px",
-            marginBottom: "32px",
-          }}
-        >
-          <span
-            style={{ fontSize: "40px", fontWeight: "700", color: "#ffffff" }}
-          >
-            My TechStack
-          </span>
-          <span style={{ fontSize: "20px", color: "#71717a" }}>
-            {Object.keys(stack).length} skills
-          </span>
-        </div>
-
-        {/* Groups */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "20px",
+            gap: "8px",
+            marginBottom: "24px",
+          }}
+        >
+          <span style={{ fontSize: "34px", fontWeight: 700 }}>My TechStack</span>
+          <span style={{ color: "#64748b", fontSize: "17px", fontWeight: 500 }}>
+            {Object.keys(stack).length} skills
+          </span>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
             flex: 1,
+            flexDirection: "column",
+            gap: "20px",
           }}
         >
           {groups.map((group) => (
@@ -124,74 +97,66 @@ export async function GET(request: Request) {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "10px",
+                gap: "12px",
               }}
             >
-              {/* Rating header */}
               <div
                 style={{
-                  display: "flex",
                   alignItems: "center",
-                  gap: "10px",
+                  display: "flex",
+                  gap: "12px",
                 }}
               >
-                <div style={{ display: "flex", gap: "4px" }}>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        width: "16px",
-                        height: "16px",
-                        borderRadius: "3px",
-                        backgroundColor:
-                          i < group.rating ? "#fbbf24" : "#3f3f46",
-                      }}
-                    />
-                  ))}
-                </div>
-                <span
-                  style={{
-                    color: "#a1a1aa",
-                    fontSize: "17px",
-                    fontWeight: "700",
-                  }}
-                >
+                <span style={{ color: "#2563eb", fontSize: "18px", fontWeight: 700 }}>
+                  {`Level ${group.rating}/5`}
+                </span>
+                <span style={{ color: "#64748b", fontSize: "16px", fontWeight: 600 }}>
                   {group.label}
                 </span>
               </div>
 
-              {/* Tech chips with icons */}
               <div
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
-                  gap: "8px",
+                  gap: "12px",
                 }}
               >
                 {group.techs.map((tech) => (
                   <div
-                    key={tech!.id}
+                    key={tech.id}
                     style={{
-                      display: "flex",
                       alignItems: "center",
-                      gap: "8px",
-                      backgroundColor: "#27272a",
-                      border: "1px solid #52525b",
-                      borderRadius: "10px",
-                      padding: "6px 14px",
-                      fontSize: "18px",
-                      fontWeight: "400",
-                      color: "#f4f4f5",
+                      backgroundColor: "#eef2ff",
+                      border: "1px solid #c7d2fe",
+                      borderRadius: "16px",
+                      display: "flex",
+                      gap: "10px",
+                      minWidth: "166px",
+                      padding: "12px 14px",
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={getDeviconSvgUrl(tech!.deviconClass)}
+                      src={getTechnologyIconDataUrl(tech.id)}
                       alt=""
-                      width={22}
-                      height={22}
+                      width={24}
+                      height={24}
+                      style={{
+                        flexShrink: 0,
+                        objectFit: "contain",
+                      }}
                     />
-                    <span>{tech!.name}</span>
+                    <span
+                      style={{
+                        color: "#0f172a",
+                        fontSize: "15px",
+                        fontWeight: 600,
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {tech.name}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -199,31 +164,60 @@ export async function GET(request: Request) {
           ))}
         </div>
 
-        {/* Footer */}
         <div
           style={{
+            color: "#94a3b8",
             display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "12px",
-          }}
-        >
-          <span style={{ color: "#52525b", fontSize: "14px" }}>
-            techstack-share.vercel.app
-          </span>
+          fontSize: "14px",
+          justifyContent: "flex-end",
+          marginTop: "18px",
+        }}
+      >
+          techstack-share.vercel.app
         </div>
       </div>
-    ),
+    </div>,
     {
       width: 1200,
       height: 630,
       fonts: [
         {
-          name: "Noto Sans",
           data: fontData,
-          weight: 400,
+          name: "Geist",
           style: "normal",
+          weight: 400,
+        },
+        {
+          data: fontData,
+          name: "Geist",
+          style: "normal",
+          weight: 700,
         },
       ],
-    }
+    },
   );
+
+  const totalDuration = Date.now() - requestStartedAt;
+  response.headers.set(
+    "Server-Timing",
+    [
+      `decode;dur=${decodeDuration}`,
+      `group;dur=${groupingDuration}`,
+      `font;dur=${fontDuration}`,
+      `total;dur=${totalDuration}`,
+    ].join(", "),
+  );
+
+  console.info(
+    "[perf][api/og]",
+    JSON.stringify({
+      decodeDuration,
+      fontDuration,
+      groups: groups.length,
+      selectedCount: Object.keys(stack).length,
+      totalDuration,
+    }),
+  );
+
+  return response;
 }

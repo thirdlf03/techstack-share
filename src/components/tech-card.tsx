@@ -1,17 +1,25 @@
 "use client";
 
+import { memo, useCallback } from "react";
 import type { Technology } from "@/data/technologies";
 import { StarRating } from "./star-rating";
+import { TechnologyIcon } from "./technology-icon";
 
 type TechCardProps = {
-  tech: Technology;
-  rating: number;
-  onRatingChange: (rating: number) => void;
+  onRatingChange: (techId: string, rating: number) => void;
   readOnly?: boolean;
+  rating: number;
+  tech: Technology;
 };
 
-export function TechCard({ tech, rating, onRatingChange, readOnly = false }: TechCardProps) {
+function TechCardComponent({ tech, rating, onRatingChange, readOnly = false }: TechCardProps) {
   const isSelected = rating > 0;
+  const handleRatingChange = useCallback(
+    (nextRating: number) => {
+      onRatingChange(tech.id, nextRating);
+    },
+    [onRatingChange, tech.id],
+  );
 
   return (
     <div
@@ -22,12 +30,11 @@ export function TechCard({ tech, rating, onRatingChange, readOnly = false }: Tec
           : "border-border hover:border-primary/50"
       }`}
     >
-      <i
-        data-testid="tech-icon"
-        className={`${tech.deviconClass} colored text-3xl`}
-      />
+      <TechnologyIcon className="size-8" dataTestId="tech-icon" techId={tech.id} />
       <span className="text-xs font-medium text-center">{tech.name}</span>
-      <StarRating value={rating} onChange={onRatingChange} readOnly={readOnly} />
+      <StarRating value={rating} onChange={handleRatingChange} readOnly={readOnly} />
     </div>
   );
 }
+
+export const TechCard = memo(TechCardComponent);

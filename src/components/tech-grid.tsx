@@ -1,55 +1,54 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import { CATEGORIES, CATEGORY_LABELS, getTechsByCategory } from "@/data/technologies";
-import { TechCard } from "./tech-card";
 import type { TechStack } from "@/lib/encoder";
+import { TechCard } from "./tech-card";
 
 type TechGridProps = {
-  stack: TechStack;
-  onStackChange: (stack: TechStack) => void;
-  searchQuery: string;
+  onRatingChange: (techId: string, rating: number) => void;
   readOnly?: boolean;
+  searchQuery: string;
+  stack: TechStack;
 };
 
-export function TechGrid({ stack, onStackChange, searchQuery, readOnly = false }: TechGridProps) {
-  const query = searchQuery.toLowerCase();
+function TechGridComponent({
+  stack,
+  onRatingChange,
+  searchQuery,
+  readOnly = false,
+}: TechGridProps) {
+  const visibleCategories = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return CATEGORIES.map((category) => ({
+      category,
+      techs: getTechsByCategory(category).filter((tech) => tech.name.toLowerCase().includes(query)),
+    })).filter((entry) => entry.techs.length > 0);
+  }, [searchQuery]);
 
   return (
     <div className="space-y-8">
-      {CATEGORIES.map((category) => {
-        const techs = getTechsByCategory(category).filter((t) =>
-          t.name.toLowerCase().includes(query)
-        );
-
-        if (techs.length === 0) return null;
-
-        return (
-          <section key={category}>
-            <h2 className="text-lg font-semibold mb-4 border-b pb-2">
-              {CATEGORY_LABELS[category]}
-            </h2>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-              {techs.map((tech) => (
-                <TechCard
-                  key={tech.id}
-                  tech={tech}
-                  rating={stack[tech.id] ?? 0}
-                  onRatingChange={(rating) => {
-                    const next = { ...stack };
-                    if (rating === 0) {
-                      delete next[tech.id];
-                    } else {
-                      next[tech.id] = rating;
-                    }
-                    onStackChange(next);
-                  }}
-                  readOnly={readOnly}
-                />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+      {visibleCategories.map(({ category, techs }) => (
+        <section key={category}>
+          <h2 className="text-lg font-semibold mb-4 border-b pb-2">
+            {CATEGORY_LABELS[category]}
+          </h2>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+            {techs.map((tech) => (
+              <TechCard
+                key={tech.id}
+                tech={tech}
+                rating={stack[tech.id] ?? 0}
+                onRatingChange={onRatingChange}
+                readOnly={readOnly}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
+
+export const TechGrid = memo(TechGridComponent);

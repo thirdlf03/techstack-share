@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { reportPerf } from "@/lib/perf";
 import { decode, type TechStack } from "@/lib/encoder";
 
 type RestoreInputProps = {
@@ -14,15 +15,23 @@ export function RestoreInput({ onRestore }: RestoreInputProps) {
   const [error, setError] = useState("");
 
   const handleRestore = () => {
+    const startedAt = performance.now();
+
     try {
-      const hash = code.includes("/share/")
-        ? code.split("/share/").pop()!
-        : code;
+      const hash = code.includes("/share/") ? code.split("/share/").pop()! : code;
       const stack = decode(hash.trim());
+      reportPerf("restore-input-decode", {
+        decodeDuration: performance.now() - startedAt,
+        restoredCount: Object.keys(stack).length,
+      });
       onRestore(stack);
       setCode("");
       setError("");
     } catch {
+      reportPerf("restore-input-decode-failed", {
+        decodeDuration: performance.now() - startedAt,
+        inputLength: code.length,
+      });
       setError("無効な共有コードです");
     }
   };

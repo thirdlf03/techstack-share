@@ -6,10 +6,7 @@ export function encode(stack: TechStack): string {
   const json = JSON.stringify(stack);
   const compressed = pako.deflate(json);
   const binary = String.fromCharCode(...compressed);
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 export function decode(hash: string): TechStack {

@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    webVitalsAttribution: ["CLS", "FCP", "INP", "LCP", "TTFB"],
+  },
 };
 
 export default nextConfig;

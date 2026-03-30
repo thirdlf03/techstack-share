@@ -19,9 +19,7 @@ export function StarRating({ value, onChange, readOnly = false }: StarRatingProp
             onChange(star === value ? 0 : star);
           }}
           className={`text-lg transition-colors ${
-            star <= value
-              ? "text-yellow-400"
-              : "text-gray-300 dark:text-gray-600"
+            star <= value ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"
           } ${readOnly ? "cursor-default" : "cursor-pointer hover:text-yellow-300"}`}
         >
           ★
