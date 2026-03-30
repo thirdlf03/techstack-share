@@ -2,12 +2,15 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import { decodePayload } from "@/lib/encoder";
-import { getTechnologyIconDataUrl } from "@/lib/technology-icons";
+import { deferredIconSvgs } from "@/data/tech-icons-deferred.generated";
+import { getTechnologyIconDataUrl, registerDeferredIcons } from "@/lib/technology-icons";
 import { groupTechStack } from "@/lib/share-card";
 
 /* eslint-disable react-hooks/purity */
 
 export const runtime = "nodejs";
+
+registerDeferredIcons(deferredIconSvgs);
 
 const fontDataPromise = readFile(
   path.join(process.cwd(), "src/app/api/og/assets/Geist-Regular.ttf"),
@@ -122,7 +125,10 @@ export async function GET(request: Request) {
                 <div style={{ display: "flex", gap: "4px" }}>
                   {Array.from({ length: group.rating }, (_, i) => (
                     <svg key={i} width="18" height="18" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z" fill="#f59e0b" />
+                      <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+                        fill="#f59e0b"
+                      />
                     </svg>
                   ))}
                 </div>
@@ -184,11 +190,11 @@ export async function GET(request: Request) {
           style={{
             color: "#94a3b8",
             display: "flex",
-          fontSize: "14px",
-          justifyContent: "flex-end",
-          marginTop: "18px",
-        }}
-      >
+            fontSize: "14px",
+            justifyContent: "flex-end",
+            marginTop: "18px",
+          }}
+        >
           techstack-share.vercel.app
         </div>
       </div>

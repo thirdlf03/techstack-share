@@ -29,11 +29,7 @@ function round(value: number) {
 function describeElement(element: Element) {
   const id = element.id ? `#${element.id}` : "";
   const classNames =
-    element.classList.length > 0
-      ? `.${Array.from(element.classList)
-          .slice(0, 3)
-          .join(".")}`
-      : "";
+    element.classList.length > 0 ? `.${Array.from(element.classList).slice(0, 3).join(".")}` : "";
 
   return `${element.tagName.toLowerCase()}${id}${classNames}`;
 }

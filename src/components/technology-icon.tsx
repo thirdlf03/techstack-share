@@ -8,12 +8,7 @@ type TechnologyIconProps = {
   techId: string;
 };
 
-export function TechnologyIcon({
-  techId,
-  className,
-  size = 32,
-  dataTestId,
-}: TechnologyIconProps) {
+export function TechnologyIcon({ techId, className, size = 32, dataTestId }: TechnologyIconProps) {
   const src = getTechnologyIconDataUrl(techId);
 
   return (

@@ -16,6 +16,7 @@ pnpm vitest run src/lib/encoder.test.ts  # Run a single test file
 ```
 
 Regenerate the icon registry after changing `src/data/technologies.ts`:
+
 ```bash
 node --experimental-strip-types scripts/generate-tech-icons.mjs
 ```

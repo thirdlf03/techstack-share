@@ -3,8 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { technologies } from "../src/data/technologies.ts";
 
-const DEVICON_BASE =
-  "https://raw.githubusercontent.com/devicons/devicon/master/icons";
+const DEVICON_BASE = "https://raw.githubusercontent.com/devicons/devicon/master/icons";
 const SIMPLE_ICONS_BASE =
   "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons";
 
@@ -147,28 +146,40 @@ async function fetchSvg(tech) {
   return normalizeSvg(rawSvg, source.fillColor);
 }
 
-function createModule(registry) {
-  return `export const technologyIconSvgs = ${JSON.stringify(registry, null, 2)} as const;\n\n` +
-    `export type TechnologyIconId = keyof typeof technologyIconSvgs;\n\n` +
-    `export function getTechnologyIconSvg(id: string): string | null {\n` +
-    `  return technologyIconSvgs[id as TechnologyIconId] ?? null;\n` +
-    `}\n`;
+/** Categories whose icons are bundled in the critical (eagerly loaded) chunk. */
+const CRITICAL_CATEGORIES = new Set(["language", "frontend"]);
+
+function createCriticalModule(registry) {
+  return `export const criticalIconSvgs: Record<string, string> = ${JSON.stringify(registry, null, 2)};\n`;
+}
+
+function createDeferredModule(registry) {
+  return `export const deferredIconSvgs: Record<string, string> = ${JSON.stringify(registry, null, 2)};\n`;
 }
 
 async function main() {
-  const registry = {};
+  const critical = {};
+  const deferred = {};
 
   for (const tech of technologies) {
-    registry[tech.id] = await fetchSvg(tech);
+    const svg = await fetchSvg(tech);
+    if (CRITICAL_CATEGORIES.has(tech.category)) {
+      critical[tech.id] = svg;
+    } else {
+      deferred[tech.id] = svg;
+    }
   }
 
-  const outputFile = path.resolve(
-    path.dirname(fileURLToPath(import.meta.url)),
-    "../src/data/tech-icons.generated.ts",
-  );
+  const dir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../src/data");
 
-  await writeFile(outputFile, createModule(registry));
-  console.log(`wrote ${outputFile}`);
+  const criticalFile = path.join(dir, "tech-icons-critical.generated.ts");
+  const deferredFile = path.join(dir, "tech-icons-deferred.generated.ts");
+
+  await writeFile(criticalFile, createCriticalModule(critical));
+  console.log(`wrote ${criticalFile} (${Object.keys(critical).length} icons)`);
+
+  await writeFile(deferredFile, createDeferredModule(deferred));
+  console.log(`wrote ${deferredFile} (${Object.keys(deferred).length} icons)`);
 }
 
 main().catch((error) => {

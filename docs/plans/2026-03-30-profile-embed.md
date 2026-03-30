@@ -13,6 +13,7 @@
 ### Task 1: Extend encoder with profile support (backward-compatible)
 
 **Files:**
+
 - Modify: `src/lib/encoder.ts`
 - Modify: `src/lib/encoder.test.ts`
 
@@ -118,6 +119,7 @@ feat: add encodePayload/decodePayload with profile support
 ### Task 2: Create ProfileInput component
 
 **Files:**
+
 - Create: `src/components/profile-input.tsx`
 
 **Step 1: Build the component**
@@ -193,13 +195,21 @@ export function ProfileInput({
             src={displayAvatar}
             alt=""
             className="size-10 rounded-full object-cover border"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
           />
         ) : (
-          <div className="size-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-sm">?</div>
+          <div className="size-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
+            ?
+          </div>
         )}
         {displayAvatar && (
-          <button type="button" onClick={handleClearAvatar} className="text-xs text-muted-foreground hover:text-foreground cursor-pointer">
+          <button
+            type="button"
+            onClick={handleClearAvatar}
+            className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+          >
             クリア
           </button>
         )}
@@ -252,12 +262,14 @@ feat: add ProfileInput component for name, GitHub ID, and avatar upload
 ### Task 3: Wire profile state into HomeContent
 
 **Files:**
+
 - Modify: `src/app/page.tsx`
 - Modify: `src/components/export-buttons.tsx`
 
 **Step 1: Add profile state and ProfileInput to page**
 
 In HomeContent, add state:
+
 ```ts
 const [profile, setProfile] = useState<Profile>({});
 const [avatarFile, setAvatarFile] = useState<string | null>(null);
@@ -290,6 +302,7 @@ feat: wire profile state into main page and export buttons
 ### Task 4: Update ShareCard to display profile
 
 **Files:**
+
 - Modify: `src/components/share-card.tsx`
 
 **Step 1: Accept optional profile props**
@@ -308,11 +321,13 @@ feat: display profile name and avatar in ShareCard
 ### Task 5: Update Canvas export to render profile
 
 **Files:**
+
 - Modify: `src/lib/export-image.ts`
 
 **Step 1: Accept profile in renderShareCardImage**
 
 Add to `ExportImageOptions`:
+
 ```ts
 profile?: { name?: string; avatarUrl?: string | null };
 ```
@@ -320,6 +335,7 @@ profile?: { name?: string; avatarUrl?: string | null };
 **Step 2: Draw avatar circle + name in header**
 
 In the header area (where "My TechStack" is drawn):
+
 - If avatarUrl provided, load as Image and draw as clipped circle (left side)
 - If name provided, draw it as the title instead of "My TechStack"
 - Keep "N skills" subtitle
@@ -337,6 +353,7 @@ feat: render profile avatar and name in Canvas export
 ### Task 6: Update OG image to render profile
 
 **Files:**
+
 - Modify: `src/app/api/og/route.tsx`
 
 **Step 1: Switch from decode to decodePayload**
@@ -347,8 +364,8 @@ const { stack, profile } = decodePayload(data);
 
 **Step 2: Render profile in OG header**
 
-If `profile.githubId`, use `<img src={`https://github.com/${profile.githubId}.png?size=80`} />` (rounded).
-If `profile.name`, replace "My TechStack" with the name.
+If `profile.githubId`, use `<img src={`https://github.com/${profile.githubId}.png?size=80`} />`(rounded).
+If`profile.name`, replace "My TechStack" with the name.
 
 **Step 3: Commit**
 
@@ -361,6 +378,7 @@ feat: render profile in OG image with GitHub avatar
 ### Task 7: Update share page to display profile
 
 **Files:**
+
 - Modify: `src/app/share/[hash]/page.tsx`
 
 **Step 1: Switch from decode to decodePayload**

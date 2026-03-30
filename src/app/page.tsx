@@ -39,7 +39,12 @@ const PreviewPanel = memo(function PreviewPanel({ stack, name, avatarUrl }: Prev
   );
 });
 
-const ActionPanel = memo(function ActionPanel({ stack, profile, avatarFile, onRestore }: ActionPanelProps) {
+const ActionPanel = memo(function ActionPanel({
+  stack,
+  profile,
+  avatarFile,
+  onRestore,
+}: ActionPanelProps) {
   return (
     <RenderProfiler id="ActionPanel">
       <div className="sticky bottom-4 bg-background/80 backdrop-blur-sm border rounded-lg p-4 space-y-4">
@@ -88,8 +93,9 @@ function HomeContent() {
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const selectedCount = Object.keys(stack).length;
 
-  const avatarUrl = avatarFile
-    || (profile.githubId ? `https://avatars.githubusercontent.com/${profile.githubId}?size=80` : null);
+  const avatarUrl =
+    avatarFile ||
+    (profile.githubId ? `https://avatars.githubusercontent.com/${profile.githubId}?size=80` : null);
 
   useEffect(() => {
     if (!restoreHash) {
@@ -192,7 +198,9 @@ function HomeContent() {
           onProfileChange={setProfile}
           onAvatarFileChange={setAvatarFile}
         />
-        <p className="text-xs text-muted-foreground -mt-4">※アップロード画像は共有リンク・OGには反映されません</p>
+        <p className="text-xs text-muted-foreground -mt-4">
+          ※アップロード画像は共有リンク・OGには反映されません
+        </p>
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <SearchBar value={searchQuery} onChange={handleSearchChange} />
@@ -218,7 +226,9 @@ function HomeContent() {
               <button
                 type="button"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                onClick={() => document.getElementById("tech-grid")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() =>
+                  document.getElementById("tech-grid")?.scrollIntoView({ behavior: "smooth" })
+                }
               >
                 ↑ 選択に戻る
               </button>
@@ -233,7 +243,12 @@ function HomeContent() {
           </>
         )}
 
-        <ActionPanel stack={stack} profile={profile} avatarFile={avatarFile} onRestore={handleRestore} />
+        <ActionPanel
+          stack={stack}
+          profile={profile}
+          avatarFile={avatarFile}
+          onRestore={handleRestore}
+        />
       </div>
     </main>
   );

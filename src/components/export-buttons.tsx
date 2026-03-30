@@ -18,7 +18,7 @@ export function ExportButtons({ stack, profile, avatarFile }: ExportButtonsProps
 
   const handleCopyLink = useCallback(async () => {
     const encodeStartedAt = performance.now();
-    const cleanProfile = (profile.name || profile.githubId) ? profile : undefined;
+    const cleanProfile = profile.name || profile.githubId ? profile : undefined;
     const hash = encodePayload({ stack, profile: cleanProfile });
     const encodeDuration = performance.now() - encodeStartedAt;
     const url = `${window.location.origin}/share/${hash}`;
@@ -37,8 +37,11 @@ export function ExportButtons({ stack, profile, avatarFile }: ExportButtonsProps
   }, [stack, profile]);
 
   const handleExportImage = useCallback(async () => {
-    const avatarUrl = avatarFile
-      || (profile.githubId ? `https://avatars.githubusercontent.com/${profile.githubId}?size=80` : null);
+    const avatarUrl =
+      avatarFile ||
+      (profile.githubId
+        ? `https://avatars.githubusercontent.com/${profile.githubId}?size=80`
+        : null);
     const renderStartedAt = performance.now();
     const blob = await renderShareCardImage(stack, {
       pixelRatio: 2,

@@ -62,12 +62,16 @@ observePerformanceEntries<PerformanceNavigationTiming>(
   },
 );
 
-observePerformanceEntries<PerformancePaintTiming>("paint", { type: "paint", buffered: true }, (entry) => {
-  reportPerf("paint", {
-    name: entry.name,
-    startTime: entry.startTime,
-  });
-});
+observePerformanceEntries<PerformancePaintTiming>(
+  "paint",
+  { type: "paint", buffered: true },
+  (entry) => {
+    reportPerf("paint", {
+      name: entry.name,
+      startTime: entry.startTime,
+    });
+  },
+);
 
 observePerformanceEntries<LargestContentfulPaintEntry>(
   "largest-contentful-paint",
@@ -105,7 +109,8 @@ observePerformanceEntries<PerformanceResourceTiming>(
   "resource",
   { type: "resource", buffered: true },
   (entry) => {
-    const isThirdParty = typeof window !== "undefined" && !entry.name.startsWith(window.location.origin);
+    const isThirdParty =
+      typeof window !== "undefined" && !entry.name.startsWith(window.location.origin);
 
     if (!isThirdParty && entry.duration < 100 && entry.initiatorType !== "font") {
       return;
@@ -126,14 +131,18 @@ observePerformanceEntries<PerformanceResourceTiming>(
   },
 );
 
-observePerformanceEntries<LongTaskEntry>("longtask", { type: "longtask", buffered: true }, (entry) => {
-  reportPerf("long-task", {
-    attribution: entry.attribution,
-    duration: entry.duration,
-    name: entry.name,
-    startTime: entry.startTime,
-  });
-});
+observePerformanceEntries<LongTaskEntry>(
+  "longtask",
+  { type: "longtask", buffered: true },
+  (entry) => {
+    reportPerf("long-task", {
+      attribution: entry.attribution,
+      duration: entry.duration,
+      name: entry.name,
+      startTime: entry.startTime,
+    });
+  },
+);
 
 export function onRouterTransitionStart(
   url: string,

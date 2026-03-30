@@ -144,8 +144,7 @@ function createCanvas(width: number, height: number, pixelRatio: number) {
 function measureHeight(stack: TechStack, width: number) {
   const groups = groupTechStack(stack);
   const innerWidth = width - LAYOUT.outerPadding * 2 - LAYOUT.panelPadding * 2;
-  const cardWidth =
-    (innerWidth - LAYOUT.cardGap * (LAYOUT.columns - 1)) / LAYOUT.columns;
+  const cardWidth = (innerWidth - LAYOUT.cardGap * (LAYOUT.columns - 1)) / LAYOUT.columns;
 
   let height = LAYOUT.outerPadding * 2 + LAYOUT.panelPadding * 2 + LAYOUT.headerHeight;
 
@@ -231,11 +230,7 @@ export async function renderShareCardImage(
 
   ctx.fillStyle = COLORS.muted;
   ctx.font = '500 17px "Geist", "Noto Sans JP", sans-serif';
-  ctx.fillText(
-    `${Object.keys(stack).length} skills`,
-    headerTextX,
-    cursorY + 56,
-  );
+  ctx.fillText(`${Object.keys(stack).length} skills`, headerTextX, cursorY + 56);
 
   cursorY += LAYOUT.headerHeight;
 

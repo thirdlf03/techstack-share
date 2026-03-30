@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { getTechnologyIconSvg } from "./tech-icons.generated";
+import { criticalIconSvgs } from "./tech-icons-critical.generated";
+import { deferredIconSvgs } from "./tech-icons-deferred.generated";
 import { technologies, CATEGORIES, getTechById, getTechsByCategory } from "./technologies";
 
 describe("technologies data", () => {
@@ -38,8 +39,9 @@ describe("technologies data", () => {
   });
 
   it("every technology should have a bundled icon", () => {
+    const allIcons = { ...criticalIconSvgs, ...deferredIconSvgs };
     for (const tech of technologies) {
-      expect(getTechnologyIconSvg(tech.id)).toContain("<svg");
+      expect(allIcons[tech.id]).toContain("<svg");
     }
   });
 });

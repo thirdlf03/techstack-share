@@ -35,8 +35,18 @@ export type Technology = {
 
 export const technologies: Technology[] = [
   // Language
-  { id: "js", name: "JavaScript", deviconClass: "devicon-javascript-original", category: "language" },
-  { id: "ts", name: "TypeScript", deviconClass: "devicon-typescript-original", category: "language" },
+  {
+    id: "js",
+    name: "JavaScript",
+    deviconClass: "devicon-javascript-original",
+    category: "language",
+  },
+  {
+    id: "ts",
+    name: "TypeScript",
+    deviconClass: "devicon-typescript-original",
+    category: "language",
+  },
   { id: "python", name: "Python", deviconClass: "devicon-python-original", category: "language" },
   { id: "go", name: "Go", deviconClass: "devicon-go-original", category: "language" },
   { id: "rust", name: "Rust", deviconClass: "devicon-rust-original", category: "language" },
@@ -53,14 +63,29 @@ export const technologies: Technology[] = [
   { id: "dart", name: "Dart", deviconClass: "devicon-dart-original", category: "language" },
   { id: "r", name: "R", deviconClass: "devicon-r-original", category: "language" },
   { id: "lua", name: "Lua", deviconClass: "devicon-lua-original", category: "language" },
-  { id: "haskell", name: "Haskell", deviconClass: "devicon-haskell-original", category: "language" },
+  {
+    id: "haskell",
+    name: "Haskell",
+    deviconClass: "devicon-haskell-original",
+    category: "language",
+  },
   { id: "perl", name: "Perl", deviconClass: "devicon-perl-original", category: "language" },
   { id: "zig", name: "Zig", deviconClass: "devicon-zig-original", category: "language" },
-  { id: "clojure", name: "Clojure", deviconClass: "devicon-clojure-original", category: "language" },
+  {
+    id: "clojure",
+    name: "Clojure",
+    deviconClass: "devicon-clojure-original",
+    category: "language",
+  },
   { id: "erlang", name: "Erlang", deviconClass: "devicon-erlang-original", category: "language" },
   { id: "julia", name: "Julia", deviconClass: "devicon-julia-original", category: "language" },
   { id: "fsharp", name: "F#", deviconClass: "devicon-fsharp-original", category: "language" },
-  { id: "objectivec", name: "Objective-C", deviconClass: "devicon-objectivec-plain", category: "language" },
+  {
+    id: "objectivec",
+    name: "Objective-C",
+    deviconClass: "devicon-objectivec-plain",
+    category: "language",
+  },
   { id: "ocaml", name: "OCaml", deviconClass: "devicon-ocaml-original", category: "language" },
   { id: "groovy", name: "Groovy", deviconClass: "devicon-groovy-original", category: "language" },
 
@@ -70,7 +95,12 @@ export const technologies: Technology[] = [
   { id: "nextjs", name: "Next.js", deviconClass: "devicon-nextjs-original", category: "frontend" },
   { id: "nuxt", name: "Nuxt", deviconClass: "devicon-nuxtjs-original", category: "frontend" },
   { id: "svelte", name: "Svelte", deviconClass: "devicon-svelte-original", category: "frontend" },
-  { id: "angular", name: "Angular", deviconClass: "devicon-angularjs-original", category: "frontend" },
+  {
+    id: "angular",
+    name: "Angular",
+    deviconClass: "devicon-angularjs-original",
+    category: "frontend",
+  },
   { id: "astro", name: "Astro", deviconClass: "devicon-astro-original", category: "frontend" },
   { id: "solid", name: "SolidJS", deviconClass: "devicon-solidjs-original", category: "frontend" },
   { id: "htmx", name: "htmx", deviconClass: "devicon-htmx-original", category: "frontend" },
@@ -83,16 +113,46 @@ export const technologies: Technology[] = [
   { id: "sass", name: "Sass", deviconClass: "devicon-sass-original", category: "frontend" },
   { id: "remix", name: "Remix", deviconClass: "devicon-remix-original", category: "frontend" },
   { id: "vite", name: "Vite", deviconClass: "devicon-vitejs-original", category: "frontend" },
-  { id: "storybook", name: "Storybook", deviconClass: "devicon-storybook-original", category: "frontend" },
-  { id: "threejs", name: "Three.js", deviconClass: "devicon-threejs-original", category: "frontend" },
+  {
+    id: "storybook",
+    name: "Storybook",
+    deviconClass: "devicon-storybook-original",
+    category: "frontend",
+  },
+  {
+    id: "threejs",
+    name: "Three.js",
+    deviconClass: "devicon-threejs-original",
+    category: "frontend",
+  },
   { id: "redux", name: "Redux", deviconClass: "devicon-redux-original", category: "frontend" },
-  { id: "webpack", name: "Webpack", deviconClass: "devicon-webpack-original", category: "frontend" },
+  {
+    id: "webpack",
+    name: "Webpack",
+    deviconClass: "devicon-webpack-original",
+    category: "frontend",
+  },
   { id: "babel", name: "Babel", deviconClass: "devicon-babel-original", category: "frontend" },
   { id: "jquery", name: "jQuery", deviconClass: "devicon-jquery-original", category: "frontend" },
-  { id: "bootstrap", name: "Bootstrap", deviconClass: "devicon-bootstrap-original", category: "frontend" },
-  { id: "materialui", name: "Material UI", deviconClass: "devicon-materialui-original", category: "frontend" },
+  {
+    id: "bootstrap",
+    name: "Bootstrap",
+    deviconClass: "devicon-bootstrap-original",
+    category: "frontend",
+  },
+  {
+    id: "materialui",
+    name: "Material UI",
+    deviconClass: "devicon-materialui-original",
+    category: "frontend",
+  },
   { id: "gatsby", name: "Gatsby", deviconClass: "devicon-gatsby-original", category: "frontend" },
-  { id: "ember", name: "Ember.js", deviconClass: "devicon-ember-original-wordmark", category: "frontend" },
+  {
+    id: "ember",
+    name: "Ember.js",
+    deviconClass: "devicon-ember-original-wordmark",
+    category: "frontend",
+  },
 
   // Backend
   { id: "nodejs", name: "Node.js", deviconClass: "devicon-nodejs-original", category: "backend" },
@@ -101,7 +161,12 @@ export const technologies: Technology[] = [
   { id: "flask", name: "Flask", deviconClass: "devicon-flask-original", category: "backend" },
   { id: "fastapi", name: "FastAPI", deviconClass: "devicon-fastapi-original", category: "backend" },
   { id: "spring", name: "Spring", deviconClass: "devicon-spring-original", category: "backend" },
-  { id: "rails", name: "Rails", deviconClass: "devicon-rails-original-wordmark", category: "backend" },
+  {
+    id: "rails",
+    name: "Rails",
+    deviconClass: "devicon-rails-original-wordmark",
+    category: "backend",
+  },
   { id: "gin", name: "Gin", deviconClass: "devicon-gin-plain", category: "backend" },
   { id: "nestjs", name: "NestJS", deviconClass: "devicon-nestjs-original", category: "backend" },
   { id: "graphql", name: "GraphQL", deviconClass: "devicon-graphql-plain", category: "backend" },
@@ -115,7 +180,12 @@ export const technologies: Technology[] = [
   { id: "laravel", name: "Laravel", deviconClass: "devicon-laravel-original", category: "backend" },
   { id: "dotnet", name: ".NET", deviconClass: "devicon-dot-net-original", category: "backend" },
   { id: "phoenix", name: "Phoenix", deviconClass: "devicon-phoenix-original", category: "backend" },
-  { id: "socketio", name: "Socket.io", deviconClass: "devicon-socketio-original", category: "backend" },
+  {
+    id: "socketio",
+    name: "Socket.io",
+    deviconClass: "devicon-socketio-original",
+    category: "backend",
+  },
   { id: "trpc", name: "tRPC", deviconClass: "devicon-trpc-original", category: "backend" },
 
   // Cloud
@@ -125,7 +195,12 @@ export const technologies: Technology[] = [
     deviconClass: "devicon-amazonwebservices-original-wordmark",
     category: "cloud",
   },
-  { id: "gcp", name: "Google Cloud", deviconClass: "devicon-googlecloud-original", category: "cloud" },
+  {
+    id: "gcp",
+    name: "Google Cloud",
+    deviconClass: "devicon-googlecloud-original",
+    category: "cloud",
+  },
   { id: "azure", name: "Azure", deviconClass: "devicon-azure-original", category: "cloud" },
   {
     id: "cloudflare",
@@ -134,7 +209,12 @@ export const technologies: Technology[] = [
     category: "cloud",
   },
   { id: "vercel", name: "Vercel", deviconClass: "devicon-vercel-original", category: "cloud" },
-  { id: "firebase", name: "Firebase", deviconClass: "devicon-firebase-original", category: "cloud" },
+  {
+    id: "firebase",
+    name: "Firebase",
+    deviconClass: "devicon-firebase-original",
+    category: "cloud",
+  },
   { id: "heroku", name: "Heroku", deviconClass: "devicon-heroku-original", category: "cloud" },
   { id: "netlify", name: "Netlify", deviconClass: "devicon-netlify-original", category: "cloud" },
   {
@@ -154,7 +234,12 @@ export const technologies: Technology[] = [
     category: "database",
   },
   { id: "mysql", name: "MySQL", deviconClass: "devicon-mysql-original", category: "database" },
-  { id: "mongodb", name: "MongoDB", deviconClass: "devicon-mongodb-original", category: "database" },
+  {
+    id: "mongodb",
+    name: "MongoDB",
+    deviconClass: "devicon-mongodb-original",
+    category: "database",
+  },
   { id: "redis", name: "Redis", deviconClass: "devicon-redis-original", category: "database" },
   { id: "sqlite", name: "SQLite", deviconClass: "devicon-sqlite-original", category: "database" },
   {
@@ -176,21 +261,36 @@ export const technologies: Technology[] = [
     deviconClass: "devicon-cassandra-original",
     category: "database",
   },
-  { id: "mariadb", name: "MariaDB", deviconClass: "devicon-mariadb-original", category: "database" },
+  {
+    id: "mariadb",
+    name: "MariaDB",
+    deviconClass: "devicon-mariadb-original",
+    category: "database",
+  },
   {
     id: "elasticsearch",
     name: "Elasticsearch",
     deviconClass: "devicon-elasticsearch-original",
     category: "database",
   },
-  { id: "kafka", name: "Kafka", deviconClass: "devicon-apachekafka-original", category: "database" },
+  {
+    id: "kafka",
+    name: "Kafka",
+    deviconClass: "devicon-apachekafka-original",
+    category: "database",
+  },
   {
     id: "couchdb",
     name: "CouchDB",
     deviconClass: "devicon-couchdb-original",
     category: "database",
   },
-  { id: "rabbitmq", name: "RabbitMQ", deviconClass: "devicon-rabbitmq-original", category: "database" },
+  {
+    id: "rabbitmq",
+    name: "RabbitMQ",
+    deviconClass: "devicon-rabbitmq-original",
+    category: "database",
+  },
 
   // DevOps
   { id: "docker", name: "Docker", deviconClass: "devicon-docker-original", category: "devops" },
@@ -286,7 +386,12 @@ export const technologies: Technology[] = [
   },
   { id: "jest", name: "Jest", deviconClass: "devicon-jest-plain", category: "testing" },
   { id: "vitest", name: "Vitest", deviconClass: "devicon-vitest-original", category: "testing" },
-  { id: "selenium", name: "Selenium", deviconClass: "devicon-selenium-original", category: "testing" },
+  {
+    id: "selenium",
+    name: "Selenium",
+    deviconClass: "devicon-selenium-original",
+    category: "testing",
+  },
 
   // Other
   { id: "git", name: "Git", deviconClass: "devicon-git-original", category: "other" },
@@ -317,13 +422,28 @@ export const technologies: Technology[] = [
   { id: "swagger", name: "Swagger", deviconClass: "devicon-swagger-original", category: "other" },
   { id: "postman", name: "Postman", deviconClass: "devicon-postman-original", category: "other" },
   { id: "eslint", name: "ESLint", deviconClass: "devicon-eslint-original", category: "other" },
-  { id: "homebrew", name: "Homebrew", deviconClass: "devicon-homebrew-original", category: "other" },
+  {
+    id: "homebrew",
+    name: "Homebrew",
+    deviconClass: "devicon-homebrew-original",
+    category: "other",
+  },
   { id: "emacs", name: "Emacs", deviconClass: "devicon-emacs-original", category: "other" },
-  { id: "archlinux", name: "Arch Linux", deviconClass: "devicon-archlinux-original", category: "other" },
+  {
+    id: "archlinux",
+    name: "Arch Linux",
+    deviconClass: "devicon-archlinux-original",
+    category: "other",
+  },
   { id: "fedora", name: "Fedora", deviconClass: "devicon-fedora-original", category: "other" },
   { id: "centos", name: "CentOS", deviconClass: "devicon-centos-original", category: "other" },
   { id: "sentry", name: "Sentry", deviconClass: "devicon-sentry-original", category: "devops" },
-  { id: "newrelic", name: "New Relic", deviconClass: "devicon-newrelic-original", category: "devops" },
+  {
+    id: "newrelic",
+    name: "New Relic",
+    deviconClass: "devicon-newrelic-original",
+    category: "devops",
+  },
   { id: "jaeger", name: "Jaeger", deviconClass: "devicon-jaeger-original", category: "devops" },
 ];
 
