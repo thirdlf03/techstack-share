@@ -26,6 +26,9 @@ export function SharePageClient({ hash, stack, name, avatarUrl }: SharePageClien
         <Link href={`/?restore=${hash}`} prefetch={false}>
           <Button variant="outline">このスタックを編集</Button>
         </Link>
+        <Link href="/" prefetch={false}>
+          <Button>自分のスタックを作る</Button>
+        </Link>
       </div>
     </>
   );
