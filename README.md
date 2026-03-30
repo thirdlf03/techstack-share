@@ -30,7 +30,7 @@ pnpm dev
 #### GitHub PAT の取得
 
 1. https://github.com/settings/tokens?type=beta でFine-grained tokenを作成
-2. Repository access でこのリポジトリ（またはfork先）を選択
+2. Repository access でforkした自分のリポジトリを選択
 3. Permissions → **Issues: Read and Write** のみ有効化
 
 #### Cloudflare Turnstile の取得
