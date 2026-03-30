@@ -1,5 +1,7 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { ImageResponse } from "next/og";
-import { decode } from "@/lib/encoder";
+import { decodePayload } from "@/lib/encoder";
 import { getTechnologyIconDataUrl } from "@/lib/technology-icons";
 import { groupTechStack } from "@/lib/share-card";
 
@@ -7,14 +9,8 @@ import { groupTechStack } from "@/lib/share-card";
 
 export const runtime = "nodejs";
 
-const fontDataPromise = fetch(new URL("./assets/Geist-Regular.ttf", import.meta.url)).then(
-  async (response) => {
-    if (!response.ok) {
-      throw new Error(`Failed to load OG font: ${response.status}`);
-    }
-
-    return response.arrayBuffer();
-  },
+const fontDataPromise = readFile(
+  path.join(process.cwd(), "src/app/api/og/assets/Geist-Regular.ttf"),
 );
 
 export async function GET(request: Request) {
@@ -26,10 +22,12 @@ export async function GET(request: Request) {
     return new Response("Missing data parameter", { status: 400 });
   }
 
-  let stack;
+  let stack, profile;
   const decodeStartedAt = Date.now();
   try {
-    stack = decode(data);
+    const payload = decodePayload(data);
+    stack = payload.stack;
+    profile = payload.profile;
   } catch {
     return new Response("Invalid data", { status: 400 });
   }
@@ -71,16 +69,30 @@ export async function GET(request: Request) {
       >
         <div
           style={{
+            alignItems: "center",
             display: "flex",
-            flexDirection: "column",
-            gap: "8px",
+            gap: "16px",
             marginBottom: "24px",
           }}
         >
-          <span style={{ fontSize: "34px", fontWeight: 700 }}>My TechStack</span>
-          <span style={{ color: "#64748b", fontSize: "17px", fontWeight: 500 }}>
-            {Object.keys(stack).length} skills
-          </span>
+          {profile?.githubId && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={`https://avatars.githubusercontent.com/${profile.githubId}?size=80`}
+              alt=""
+              width={52}
+              height={52}
+              style={{ borderRadius: "50%", flexShrink: 0, objectFit: "cover" }}
+            />
+          )}
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span style={{ fontSize: "34px", fontWeight: 700 }}>
+              {profile?.name || "My TechStack"}
+            </span>
+            <span style={{ color: "#64748b", fontSize: "17px", fontWeight: 500 }}>
+              {Object.keys(stack).length} skills
+            </span>
+          </div>
         </div>
 
         <div
@@ -107,9 +119,13 @@ export async function GET(request: Request) {
                   gap: "12px",
                 }}
               >
-                <span style={{ color: "#2563eb", fontSize: "18px", fontWeight: 700 }}>
-                  {`Level ${group.rating}/5`}
-                </span>
+                <div style={{ display: "flex", gap: "4px" }}>
+                  {Array.from({ length: group.rating }, (_, i) => (
+                    <svg key={i} width="18" height="18" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z" fill="#f59e0b" />
+                    </svg>
+                  ))}
+                </div>
                 <span style={{ color: "#64748b", fontSize: "16px", fontWeight: 600 }}>
                   {group.label}
                 </span>

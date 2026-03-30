@@ -69,6 +69,26 @@ const OVERRIDES = {
     folder: "zig",
     fileName: "zig-original.svg",
   },
+  hono: {
+    type: "simple-icons",
+    slug: "hono",
+    fillColor: "#E36002",
+  },
+  render: {
+    type: "simple-icons",
+    slug: "render",
+    fillColor: "#46E3B7",
+  },
+  webrtc: {
+    type: "simple-icons",
+    slug: "webrtc",
+    fillColor: "#333333",
+  },
+  jaeger: {
+    type: "simple-icons",
+    slug: "jaeger",
+    fillColor: "#60D0E4",
+  },
 };
 
 function stripDeviconVariant(name) {

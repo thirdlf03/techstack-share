@@ -5,6 +5,7 @@ import { groupTechStack } from "@/lib/share-card";
 type ExportImageOptions = {
   pixelRatio?: number;
   width?: number;
+  profile?: { name?: string; avatarUrl?: string | null };
 };
 
 const COLORS = {
@@ -192,15 +193,47 @@ export async function renderShareCardImage(
 
   let cursorY = panelY + LAYOUT.panelPadding;
 
+  // Draw profile avatar if available
+  const avatarSize = 48;
+  let headerTextX = panelX + LAYOUT.panelPadding;
+
+  if (options.profile?.avatarUrl) {
+    try {
+      const avatarImg = new Image();
+      avatarImg.crossOrigin = "anonymous";
+      await new Promise<void>((resolve, reject) => {
+        avatarImg.onload = () => resolve();
+        avatarImg.onerror = () => reject();
+        avatarImg.src = options.profile!.avatarUrl!;
+      });
+
+      const avatarX = panelX + LAYOUT.panelPadding;
+      const avatarY = cursorY + 4;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(avatarImg, avatarX, avatarY, avatarSize, avatarSize);
+      ctx.restore();
+
+      headerTextX = avatarX + avatarSize + 16;
+    } catch {
+      // Avatar load failed, continue without it
+    }
+  }
+
+  const title = options.profile?.name || "My TechStack";
   ctx.fillStyle = COLORS.text;
   ctx.font = '700 34px "Geist", "Noto Sans JP", sans-serif';
-  ctx.fillText("My TechStack", panelX + LAYOUT.panelPadding, cursorY + 28);
+  ctx.fillText(title, headerTextX, cursorY + 28);
 
   ctx.fillStyle = COLORS.muted;
   ctx.font = '500 17px "Geist", "Noto Sans JP", sans-serif';
   ctx.fillText(
     `${Object.keys(stack).length} skills`,
-    panelX + LAYOUT.panelPadding,
+    headerTextX,
     cursorY + 56,
   );
 
@@ -208,11 +241,16 @@ export async function renderShareCardImage(
 
   const iconIds = groups.flatMap((group) => group.techs.map((tech) => tech.id));
   const uniqueIconIds = [...new Set(iconIds)];
-  const iconMap = new Map(
-    await Promise.all(
-      uniqueIconIds.map(async (id) => [id, await loadTechnologyIconImage(id)] as const),
-    ),
+  const iconEntries = await Promise.all(
+    uniqueIconIds.map(async (id) => {
+      try {
+        return [id, await loadTechnologyIconImage(id)] as const;
+      } catch {
+        return [id, null] as const;
+      }
+    }),
   );
+  const iconMap = new Map(iconEntries);
 
   for (const group of groups) {
     const groupX = panelX + LAYOUT.panelPadding;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { encode, decode } from "./encoder";
+import { encode, decode, encodePayload, decodePayload, type SharePayload } from "./encoder";
 
 describe("encoder", () => {
   it("should encode and decode an empty stack", () => {
@@ -41,5 +41,38 @@ describe("encoder", () => {
     const encoded = encode(stack);
     expect(encoded.length).toBeLessThan(300);
     expect(decode(encoded)).toEqual(stack);
+  });
+});
+
+describe("payload encoder", () => {
+  it("should encode and decode payload with profile", () => {
+    const payload: SharePayload = {
+      stack: { react: 5, ts: 4 },
+      profile: { name: "Alice", githubId: "alice" },
+    };
+    const hash = encodePayload(payload);
+    expect(decodePayload(hash)).toEqual(payload);
+  });
+
+  it("should encode and decode payload without profile", () => {
+    const payload: SharePayload = { stack: { go: 3 } };
+    const hash = encodePayload(payload);
+    expect(decodePayload(hash)).toEqual(payload);
+  });
+
+  it("should decode legacy hash (plain TechStack) as payload", () => {
+    const legacyHash = encode({ react: 5 });
+    const payload = decodePayload(legacyHash);
+    expect(payload.stack).toEqual({ react: 5 });
+    expect(payload.profile).toBeUndefined();
+  });
+
+  it("should encode payload with name only (no githubId)", () => {
+    const payload: SharePayload = {
+      stack: { rust: 4 },
+      profile: { name: "Bob" },
+    };
+    const hash = encodePayload(payload);
+    expect(decodePayload(hash)).toEqual(payload);
   });
 });

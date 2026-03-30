@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { decode } from "@/lib/encoder";
+import { decodePayload } from "@/lib/encoder";
 import { ShareCard } from "@/components/share-card";
 import { SharePageClient } from "./client";
 
@@ -9,18 +9,31 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { hash } = await params;
+
+  let title = "TechStack Share";
+  let description = "Check out my tech stack!";
+  try {
+    const { profile } = decodePayload(hash);
+    if (profile?.name) {
+      title = `${profile.name}'s TechStack`;
+      description = `Check out ${profile.name}'s tech stack!`;
+    }
+  } catch {
+    // Use defaults
+  }
+
   return {
-    title: "TechStack Share",
-    description: "Check out my tech stack!",
+    title,
+    description,
     openGraph: {
-      title: "TechStack Share",
-      description: "Check out my tech stack!",
+      title,
+      description,
       images: [`/api/og?data=${hash}`],
     },
     twitter: {
       card: "summary_large_image",
-      title: "TechStack Share",
-      description: "Check out my tech stack!",
+      title,
+      description,
       images: [`/api/og?data=${hash}`],
     },
   };
@@ -29,9 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SharePage({ params }: Props) {
   const { hash } = await params;
 
-  let stack;
+  let payload;
   try {
-    stack = decode(hash);
+    payload = decodePayload(hash);
   } catch {
     return (
       <main className="container mx-auto px-4 py-8 max-w-6xl">
@@ -41,12 +54,17 @@ export default async function SharePage({ params }: Props) {
     );
   }
 
+  const { stack, profile } = payload;
+  const avatarUrl = profile?.githubId
+    ? `https://avatars.githubusercontent.com/${profile.githubId}?size=80`
+    : null;
+
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-2">TechStack Share</h1>
+      <h1 className="text-3xl font-bold mb-2">{profile?.name ? `${profile.name}'s TechStack` : "TechStack Share"}</h1>
       <p className="text-muted-foreground mb-6">共有された技術スタック</p>
 
-      <ShareCard stack={stack} />
+      <ShareCard stack={stack} name={profile?.name} avatarUrl={avatarUrl} />
 
       <SharePageClient hash={hash} />
     </main>

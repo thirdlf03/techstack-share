@@ -3,20 +3,23 @@
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { reportPerf } from "@/lib/perf";
-import { encode, type TechStack } from "@/lib/encoder";
+import { encodePayload, type Profile, type TechStack } from "@/lib/encoder";
 import { renderShareCardImage } from "@/lib/export-image";
 
 type ExportButtonsProps = {
   stack: TechStack;
+  profile: Profile;
+  avatarFile: string | null;
 };
 
-export function ExportButtons({ stack }: ExportButtonsProps) {
+export function ExportButtons({ stack, profile, avatarFile }: ExportButtonsProps) {
   const [copied, setCopied] = useState(false);
   const isEmpty = Object.keys(stack).length === 0;
 
   const handleCopyLink = useCallback(async () => {
     const encodeStartedAt = performance.now();
-    const hash = encode(stack);
+    const cleanProfile = (profile.name || profile.githubId) ? profile : undefined;
+    const hash = encodePayload({ stack, profile: cleanProfile });
     const encodeDuration = performance.now() - encodeStartedAt;
     const url = `${window.location.origin}/share/${hash}`;
 
@@ -31,11 +34,16 @@ export function ExportButtons({ stack }: ExportButtonsProps) {
 
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  }, [stack]);
+  }, [stack, profile]);
 
   const handleExportImage = useCallback(async () => {
+    const avatarUrl = avatarFile
+      || (profile.githubId ? `https://avatars.githubusercontent.com/${profile.githubId}?size=80` : null);
     const renderStartedAt = performance.now();
-    const blob = await renderShareCardImage(stack, { pixelRatio: 2 });
+    const blob = await renderShareCardImage(stack, {
+      pixelRatio: 2,
+      profile: { name: profile.name, avatarUrl },
+    });
     const renderDuration = performance.now() - renderStartedAt;
     const objectUrl = URL.createObjectURL(blob);
 
@@ -52,7 +60,7 @@ export function ExportButtons({ stack }: ExportButtonsProps) {
       selectedCount: Object.keys(stack).length,
       totalDuration: renderDuration,
     });
-  }, [stack]);
+  }, [stack, profile, avatarFile]);
 
   return (
     <div className="flex gap-3 flex-wrap">

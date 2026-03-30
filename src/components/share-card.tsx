@@ -6,13 +6,31 @@ import { TechnologyIcon } from "./technology-icon";
 
 type ShareCardProps = {
   stack: TechStack;
+  name?: string;
+  avatarUrl?: string | null;
 };
 
-export function ShareCard({ stack }: ShareCardProps) {
+export function ShareCard({ stack, name, avatarUrl }: ShareCardProps) {
   const grouped = groupTechStack(stack);
 
   return (
     <div className="space-y-6">
+      {(name || avatarUrl) && (
+        <div className="flex items-center gap-3">
+          {avatarUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={avatarUrl}
+              alt=""
+              className="size-10 rounded-full object-cover border"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          )}
+          {name && <span className="text-lg font-bold">{name}</span>}
+        </div>
+      )}
       {grouped.map((group) => (
         <section key={group.rating}>
           <h2 className="text-lg font-semibold mb-3 border-b pb-2 flex items-center gap-2">
