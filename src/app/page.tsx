@@ -7,6 +7,7 @@ import { ProfileInput } from "@/components/profile-input";
 import { RenderProfiler } from "@/components/render-profiler";
 import { RestoreInput } from "@/components/restore-input";
 import { SearchBar } from "@/components/search-bar";
+import { RequestTechModal } from "@/components/request-tech-modal";
 import { ShareCard } from "@/components/share-card";
 import { TechGrid } from "@/components/tech-grid";
 import { decodePayload, type Profile, type TechStack } from "@/lib/encoder";
@@ -93,6 +94,7 @@ function HomeContent() {
   const [profile, setProfile] = useState<Profile>(restorePayload.profile ?? {});
   const [avatarFile, setAvatarFile] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const selectedCount = Object.keys(stack).length;
 
@@ -191,7 +193,16 @@ function HomeContent() {
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
       <h1 className="text-3xl font-bold mb-2">TechStack Share</h1>
-      <p className="text-muted-foreground mb-4">あなたの技術スタックと熟練度を共有しよう</p>
+      <div className="flex items-center gap-4 mb-4">
+        <p className="text-muted-foreground">あなたの技術スタックと熟練度を共有しよう</p>
+        <button
+          type="button"
+          className="text-xs text-muted-foreground hover:text-foreground border rounded-md px-2 py-1 transition-colors cursor-pointer whitespace-nowrap"
+          onClick={() => setRequestModalOpen(true)}
+        >
+          + 技術の追加をリクエスト
+        </button>
+      </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mb-6">
         <span>★★★★★ Expert</span>
         <span>★★★★☆ Advanced</span>
@@ -259,6 +270,7 @@ function HomeContent() {
           onRestore={handleRestore}
         />
       </div>
+      <RequestTechModal open={requestModalOpen} onClose={() => setRequestModalOpen(false)} />
     </main>
   );
 }
