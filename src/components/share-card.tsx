@@ -9,9 +9,10 @@ type ShareCardProps = {
   name?: string;
   avatarUrl?: string | null;
   githubId?: string;
+  linkable?: boolean;
 };
 
-export function ShareCard({ stack, name, avatarUrl, githubId }: ShareCardProps) {
+export function ShareCard({ stack, name, avatarUrl, githubId, linkable }: ShareCardProps) {
   const grouped = groupTechStack(stack);
 
   return (
@@ -54,15 +55,30 @@ export function ShareCard({ stack, name, avatarUrl, githubId }: ShareCardProps) 
             <span className="text-muted-foreground text-sm">{group.label}</span>
           </h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-            {group.techs.map((tech) => (
-              <div
-                key={tech.id}
-                className="flex flex-col items-center gap-2 rounded-xl border border-primary bg-primary/5 p-3"
-              >
-                <TechnologyIcon className="size-8" techId={tech.id} />
-                <span className="text-xs font-medium text-center">{tech.name}</span>
-              </div>
-            ))}
+            {group.techs.map((tech) => {
+              const content = (
+                <>
+                  <TechnologyIcon className="size-8" techId={tech.id} />
+                  <span className="text-xs font-medium text-center">{tech.name}</span>
+                </>
+              );
+              const className = "flex flex-col items-center gap-2 rounded-xl border border-primary bg-primary/5 p-3";
+              return linkable ? (
+                <a
+                  key={tech.id}
+                  href={tech.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${className} hover:bg-primary/10 transition-colors`}
+                >
+                  {content}
+                </a>
+              ) : (
+                <div key={tech.id} className={className}>
+                  {content}
+                </div>
+              );
+            })}
           </div>
         </section>
       ))}

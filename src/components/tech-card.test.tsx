@@ -7,6 +7,7 @@ const mockTech = {
   name: "React",
   deviconClass: "devicon-react-plain",
   category: "frontend" as const,
+  url: "https://react.dev",
 };
 
 describe("TechCard", () => {
