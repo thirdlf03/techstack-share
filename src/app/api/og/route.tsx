@@ -5,7 +5,7 @@ import { groupTechStack } from "@/lib/share-card";
 
 /* eslint-disable react-hooks/purity */
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 const fontDataPromise = fetch(new URL("./assets/Geist-Regular.ttf", import.meta.url)).then(
   async (response) => {
