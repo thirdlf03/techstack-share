@@ -3,6 +3,9 @@
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Turnstile } from "@/components/turnstile";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 type RequestTechModalProps = {
   open: boolean;
@@ -14,19 +17,21 @@ type Status = "idle" | "submitting" | "success" | "error";
 export function RequestTechModal({ open, onClose }: RequestTechModalProps) {
   const [techName, setTechName] = useState("");
   const [docUrl, setDocUrl] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleClose = useCallback(() => {
     setTechName("");
     setDocUrl("");
+    setTurnstileToken(null);
     setStatus("idle");
     setErrorMessage("");
     onClose();
   }, [onClose]);
 
   const handleSubmit = useCallback(async () => {
-    if (!techName.trim()) return;
+    if (!techName.trim() || !turnstileToken) return;
 
     setStatus("submitting");
     setErrorMessage("");
@@ -35,7 +40,11 @@ export function RequestTechModal({ open, onClose }: RequestTechModalProps) {
       const res = await fetch("/api/request-tech", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ techName: techName.trim(), docUrl: docUrl.trim() || undefined }),
+        body: JSON.stringify({
+          techName: techName.trim(),
+          docUrl: docUrl.trim() || undefined,
+          turnstileToken,
+        }),
       });
 
       if (!res.ok) {
@@ -48,7 +57,7 @@ export function RequestTechModal({ open, onClose }: RequestTechModalProps) {
       setErrorMessage(e instanceof Error ? e.message : "送信に失敗しました");
       setStatus("error");
     }
-  }, [techName, docUrl]);
+  }, [techName, docUrl, turnstileToken]);
 
   if (!open) return null;
 
@@ -102,6 +111,14 @@ export function RequestTechModal({ open, onClose }: RequestTechModalProps) {
               </div>
             </div>
 
+            {TURNSTILE_SITE_KEY && (
+              <Turnstile
+                siteKey={TURNSTILE_SITE_KEY}
+                onVerify={setTurnstileToken}
+                onExpire={() => setTurnstileToken(null)}
+              />
+            )}
+
             {status === "error" && (
               <p className="text-sm text-destructive">{errorMessage}</p>
             )}
@@ -112,7 +129,7 @@ export function RequestTechModal({ open, onClose }: RequestTechModalProps) {
               </Button>
               <Button
                 onClick={handleSubmit}
-                disabled={!techName.trim() || status === "submitting"}
+                disabled={!techName.trim() || !turnstileToken || status === "submitting"}
               >
                 {status === "submitting" ? "送信中..." : "送信"}
               </Button>
