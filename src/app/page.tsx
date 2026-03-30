@@ -9,7 +9,7 @@ import { RestoreInput } from "@/components/restore-input";
 import { SearchBar } from "@/components/search-bar";
 import { ShareCard } from "@/components/share-card";
 import { TechGrid } from "@/components/tech-grid";
-import { decode, type Profile, type TechStack } from "@/lib/encoder";
+import { decodePayload, type Profile, type TechStack } from "@/lib/encoder";
 import { endPerfMark, reportPerf, startPerfMark } from "@/lib/perf";
 
 type PreviewPanelProps = {
@@ -64,6 +64,7 @@ function HomeContent() {
       return {
         decodeDuration: 0,
         error: null as string | null,
+        profile: undefined as Profile | undefined,
         stack: {} as TechStack,
       };
     }
@@ -71,23 +72,25 @@ function HomeContent() {
     const startedAt = performance.now();
 
     try {
-      const restoredStack = decode(restoreHash);
+      const decoded = decodePayload(restoreHash);
       return {
         decodeDuration: performance.now() - startedAt,
         error: null as string | null,
-        stack: restoredStack,
+        profile: decoded.profile,
+        stack: decoded.stack,
       };
     } catch (error) {
       return {
         decodeDuration: performance.now() - startedAt,
         error: error instanceof Error ? error.message : "unknown decode error",
+        profile: undefined as Profile | undefined,
         stack: {} as TechStack,
       };
     }
   }, [restoreHash]);
 
   const [stack, setStack] = useState<TechStack>(restorePayload.stack);
-  const [profile, setProfile] = useState<Profile>({});
+  const [profile, setProfile] = useState<Profile>(restorePayload.profile ?? {});
   const [avatarFile, setAvatarFile] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const deferredSearchQuery = useDeferredValue(searchQuery);
@@ -103,13 +106,16 @@ function HomeContent() {
     }
 
     setStack(restorePayload.stack);
+    if (restorePayload.profile) {
+      setProfile(restorePayload.profile);
+    }
     reportPerf("restore-param", {
       decodeDuration: restorePayload.decodeDuration,
       error: restorePayload.error,
       hashLength: restoreHash.length,
       restoredCount: Object.keys(restorePayload.stack).length,
     });
-  }, [restoreHash, restorePayload.decodeDuration, restorePayload.error, restorePayload.stack]);
+  }, [restoreHash, restorePayload.decodeDuration, restorePayload.error, restorePayload.profile, restorePayload.stack]);
 
   useEffect(() => {
     reportPerf("home-mounted", {
@@ -169,7 +175,7 @@ function HomeContent() {
     [selectedCount, stack],
   );
 
-  const handleRestore = useCallback((nextStack: TechStack) => {
+  const handleRestore = useCallback((nextStack: TechStack, nextProfile?: Profile) => {
     startPerfMark("restore-apply", {
       restoredCount: Object.keys(nextStack).length,
     });
@@ -177,6 +183,9 @@ function HomeContent() {
       restoredCount: Object.keys(nextStack).length,
     });
     setStack(nextStack);
+    if (nextProfile) {
+      setProfile(nextProfile);
+    }
   }, []);
 
   return (

@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { reportPerf } from "@/lib/perf";
-import { decode, type TechStack } from "@/lib/encoder";
+import { decodePayload, type Profile, type TechStack } from "@/lib/encoder";
 
 type RestoreInputProps = {
-  onRestore: (stack: TechStack) => void;
+  onRestore: (stack: TechStack, profile?: Profile) => void;
 };
 
 export function RestoreInput({ onRestore }: RestoreInputProps) {
@@ -19,12 +19,12 @@ export function RestoreInput({ onRestore }: RestoreInputProps) {
 
     try {
       const hash = code.includes("/share/") ? code.split("/share/").pop()! : code;
-      const stack = decode(hash.trim());
+      const { stack, profile } = decodePayload(hash.trim());
       reportPerf("restore-input-decode", {
         decodeDuration: performance.now() - startedAt,
         restoredCount: Object.keys(stack).length,
       });
-      onRestore(stack);
+      onRestore(stack, profile);
       setCode("");
       setError("");
     } catch {

@@ -8,17 +8,17 @@ Object.assign(navigator, {
 
 describe("ExportButtons", () => {
   it("should render share link button", () => {
-    render(<ExportButtons stack={{ aws: 3 }} />);
+    render(<ExportButtons stack={{ aws: 3 }} profile={{}} avatarFile={null} />);
     expect(screen.getByText("共有リンクをコピー")).toBeInTheDocument();
   });
 
   it("should render image export button", () => {
-    render(<ExportButtons stack={{ aws: 3 }} />);
+    render(<ExportButtons stack={{ aws: 3 }} profile={{}} avatarFile={null} />);
     expect(screen.getByText("画像で保存")).toBeInTheDocument();
   });
 
   it("should disable buttons when stack is empty", () => {
-    render(<ExportButtons stack={{}} />);
+    render(<ExportButtons stack={{}} profile={{}} avatarFile={null} />);
     const buttons = screen.getAllByRole("button");
     buttons.forEach((btn) => {
       expect(btn).toBeDisabled();
