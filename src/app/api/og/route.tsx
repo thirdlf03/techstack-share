@@ -37,7 +37,55 @@ export async function GET(request: Request) {
   const decodeDuration = Date.now() - decodeStartedAt;
 
   const groupingStartedAt = Date.now();
-  const groups = groupTechStack(stack);
+  const allGroups = groupTechStack(stack);
+
+  // --- Fit groups into the fixed 630px OG image ---
+  // Available height budget for tech content area:
+  //   630 (total) - 80 (outer padding) - 72 (inner padding)
+  //   - 80 (header) - 32 (footer+margin) = ~366px
+  const BUDGET = 366;
+  const GROUP_HEADER = 42; // stars + label + gap
+  const ROW_HEIGHT = 48; // card height
+  const ROW_GAP = 12;
+  const GROUP_GAP = 20;
+  const CARDS_PER_ROW = 5;
+
+  function groupHeight(techCount: number): number {
+    const rows = Math.ceil(techCount / CARDS_PER_ROW);
+    return GROUP_HEADER + rows * ROW_HEIGHT + (rows - 1) * ROW_GAP;
+  }
+
+  let usedHeight = 0;
+  let totalShown = 0;
+  const groups: typeof allGroups = [];
+
+  for (const group of allGroups) {
+    const gapBefore = groups.length > 0 ? GROUP_GAP : 0;
+    const fullH = gapBefore + groupHeight(group.techs.length);
+
+    if (usedHeight + fullH <= BUDGET) {
+      // Entire group fits
+      groups.push(group);
+      usedHeight += fullH;
+      totalShown += group.techs.length;
+      continue;
+    }
+
+    // Try fitting a partial group (at least 1 row)
+    const headerCost = gapBefore + GROUP_HEADER + ROW_HEIGHT;
+    if (usedHeight + headerCost <= BUDGET) {
+      const remaining = BUDGET - usedHeight - gapBefore - GROUP_HEADER;
+      const maxRows = Math.max(1, Math.floor((remaining + ROW_GAP) / (ROW_HEIGHT + ROW_GAP)));
+      const maxTechs = maxRows * CARDS_PER_ROW;
+      const sliced = group.techs.slice(0, maxTechs);
+      groups.push({ ...group, techs: sliced });
+      totalShown += sliced.length;
+    }
+    break; // No more space
+  }
+
+  const totalCount = Object.keys(stack).length;
+  const hiddenCount = totalCount - totalShown;
   const groupingDuration = Date.now() - groupingStartedAt;
 
   const fontStartedAt = Date.now();
@@ -188,14 +236,17 @@ export async function GET(request: Request) {
 
         <div
           style={{
+            alignItems: "center",
             color: "#94a3b8",
             display: "flex",
             fontSize: "14px",
-            justifyContent: "flex-end",
-            marginTop: "18px",
+            justifyContent: "space-between",
+            marginTop: "auto",
+            paddingTop: "12px",
           }}
         >
-          techstack-share.vercel.app
+          <span>{hiddenCount > 0 ? `+${hiddenCount} more skills` : ""}</span>
+          <span>techstack-share.vercel.app</span>
         </div>
       </div>
     </div>,
