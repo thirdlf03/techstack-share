@@ -75,4 +75,91 @@ describe("payload encoder", () => {
     const hash = encodePayload(payload);
     expect(decodePayload(hash)).toEqual(payload);
   });
+
+  it("should produce compact binary encoding for large stacks", () => {
+    const payload: SharePayload = {
+      stack: {
+        python: 4,
+        go: 3,
+        rust: 2,
+        cpp: 1,
+        elixir: 1,
+        swift: 1,
+        ts: 3,
+        php: 1,
+        js: 2,
+        react: 3,
+        nextjs: 2,
+        tailwind: 3,
+        vite: 3,
+        storybook: 3,
+        fastapi: 4,
+        bun: 2,
+        hono: 3,
+        phoenix: 2,
+        laravel: 2,
+        grpc: 3,
+        aws: 3,
+        cloudflare: 4,
+        gcp: 2,
+        vercel: 1,
+        pulumi: 2,
+        postgresql: 2,
+        mysql: 2,
+        redis: 1,
+        dynamodb: 2,
+        kafka: 2,
+        supabase: 2,
+        terraform: 3,
+        githubactions: 4,
+        prometheus: 2,
+        grafana: 2,
+        kubernetes: 2,
+        docker: 3,
+        argocd: 2,
+        helm: 1,
+        opentelemetry: 2,
+        reactnative: 2,
+        flutter: 1,
+        expo: 2,
+        tauri: 2,
+        electron: 1,
+        git: 3,
+        linux: 2,
+        neovim: 3,
+        ubuntu: 2,
+        wasm: 2,
+        webrtc: 3,
+        llvm: 1,
+        bash: 1,
+      },
+      profile: { name: "さどるふ", githubId: "thirdlf03" },
+    };
+    const hash = encodePayload(payload);
+    // Old format was 492 chars; new binary should be ~88 chars
+    expect(hash.length).toBeLessThan(120);
+    expect(hash).toMatch(/^[A-Za-z0-9_-]+$/);
+    expect(decodePayload(hash)).toEqual(payload);
+  });
+
+  it("should decode old pako-format hashes (backward compat)", () => {
+    // This hash was produced by the old JSON+deflate encoder
+    const oldHash =
+      "eJxFUjGS2zAM_AtrF7lcKv0gz6AoUMKJIhgQlK25ceFrr84j8oC8yB8JDfgmlVbgAtxd8N1V8WF1w7srhyyU3fDj5GZyw-vJcavihu8nF0pxw8vJQcILssJ6xiiKpCq5LMZ5q9rC4IPoQYaLPIviMZ0xT1rfUUBBFeJjJFr1L_quqKDqGFvWvq6LnpcQZLxoMXn2OyTFM5egBH82NSFRm2KngBkKRXk7cHi0dJ2lpbahVgtVmRnqLxu2HV-IYcKq7OnIfqNp1PLq4-oV1Vb86CuYO2D2kXhTBTPK0sYeAlKuKqIwbSALtPrU7KPPNmdtI3AGATuaKKzAZohnCpOlAGlTMVQgCyTo0_j4n3b2grtJiamJgG0KLoWe6Tc2w703CD-W_aJC9aaEuVmyGWhHc9H6CqRp9ezrZgBGFos7pd0k9RCWDq7qMmKCx4vqkfWvu99-329_7h-f99tf9xXMz-7JyYI8pfjt1V2v_wBoHc6b";
+    const payload = decodePayload(oldHash);
+    expect(Object.keys(payload.stack).length).toBe(53);
+    expect(payload.stack.python).toBe(4);
+    expect(payload.profile?.name).toBe("さどるふ");
+    expect(payload.profile?.githubId).toBe("thirdlf03");
+  });
+
+  it("should handle decode() with new binary format", () => {
+    const payload: SharePayload = {
+      stack: { react: 5, docker: 3, python: 4 },
+      profile: { name: "Test" },
+    };
+    const hash = encodePayload(payload);
+    // decode() returns only stack
+    expect(decode(hash)).toEqual(payload.stack);
+  });
 });
