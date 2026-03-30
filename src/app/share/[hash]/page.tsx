@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { decodePayload } from "@/lib/encoder";
 import { SharePageClient } from "./client";
 
@@ -60,9 +61,14 @@ export default async function SharePage({ params }: Props) {
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-2">
-        {profile?.name ? `${profile.name}'s TechStack` : "TechStack Share"}
-      </h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-3xl font-bold">
+          {profile?.name ? `${profile.name}'s TechStack` : "TechStack Share"}
+        </h1>
+        <Link href="/" className="text-sm text-primary hover:underline" prefetch={false}>
+          自分のスタックを作る →
+        </Link>
+      </div>
       <p className="text-muted-foreground mb-6">共有された技術スタック</p>
 
       <SharePageClient hash={hash} stack={stack} name={profile?.name} avatarUrl={avatarUrl} />
