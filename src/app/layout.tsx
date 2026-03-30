@@ -27,7 +27,17 @@ export default function RootLayout({
     <html lang="ja" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <WebVitals />
-        {children}
+        <div className="flex-1">{children}</div>
+        <footer className="py-4 text-center text-xs text-muted-foreground">
+          <a
+            href="https://github.com/thirdlf03/techstack-share"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground transition-colors"
+          >
+            Powered by TechStack Share
+          </a>
+        </footer>
       </body>
     </html>
   );
