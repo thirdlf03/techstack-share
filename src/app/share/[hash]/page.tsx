@@ -71,7 +71,7 @@ export default async function SharePage({ params }: Props) {
       </div>
       <p className="text-muted-foreground mb-6">共有された技術スタック</p>
 
-      <SharePageClient hash={hash} stack={stack} name={profile?.name} avatarUrl={avatarUrl} />
+      <SharePageClient hash={hash} stack={stack} name={profile?.name} avatarUrl={avatarUrl} githubId={profile?.githubId} />
     </main>
   );
 }

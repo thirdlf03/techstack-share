@@ -16,12 +16,13 @@ type SharePageClientProps = {
   stack: TechStack;
   name?: string;
   avatarUrl?: string | null;
+  githubId?: string;
 };
 
-export function SharePageClient({ hash, stack, name, avatarUrl }: SharePageClientProps) {
+export function SharePageClient({ hash, stack, name, avatarUrl, githubId }: SharePageClientProps) {
   return (
     <>
-      <ShareCard stack={stack} name={name} avatarUrl={avatarUrl} />
+      <ShareCard stack={stack} name={name} avatarUrl={avatarUrl} githubId={githubId} />
       <div className="flex gap-3 mt-6">
         <Link href={`/?restore=${hash}`} prefetch={false}>
           <Button variant="outline">このスタックを編集</Button>
