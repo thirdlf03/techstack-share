@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { decodePayload } from "@/lib/encoder";
-import { ShareCard } from "@/components/share-card";
 import { SharePageClient } from "./client";
 
 type Props = {
@@ -66,9 +65,7 @@ export default async function SharePage({ params }: Props) {
       </h1>
       <p className="text-muted-foreground mb-6">共有された技術スタック</p>
 
-      <ShareCard stack={stack} name={profile?.name} avatarUrl={avatarUrl} />
-
-      <SharePageClient hash={hash} />
+      <SharePageClient hash={hash} stack={stack} name={profile?.name} avatarUrl={avatarUrl} />
     </main>
   );
 }

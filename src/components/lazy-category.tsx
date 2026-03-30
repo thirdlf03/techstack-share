@@ -10,14 +10,19 @@ type LazyCategoryProps = {
 
 export function LazyCategory({ children, minHeight = 120 }: LazyCategoryProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const hasIO = typeof IntersectionObserver !== "undefined";
-  const [visible, setVisible] = useState(!hasIO);
+  // Always start false to match SSR output and avoid hydration mismatch.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!hasIO) return;
-
     const el = ref.current;
     if (!el) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      // Test environment (jsdom) — render immediately.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- environment fallback, not cascading render
+      setVisible(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -31,7 +36,7 @@ export function LazyCategory({ children, minHeight = 120 }: LazyCategoryProps) {
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [hasIO]);
+  }, []);
 
   return (
     <div ref={ref} style={visible ? undefined : { minHeight }}>
