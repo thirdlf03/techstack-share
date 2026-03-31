@@ -104,7 +104,7 @@ export const technologies: Technology[] = [
   {
     id: "angular",
     name: "Angular",
-    deviconClass: "devicon-angularjs-original",
+    deviconClass: "devicon-angular-original",
     category: "frontend",
     url: "https://angular.dev",
   },
